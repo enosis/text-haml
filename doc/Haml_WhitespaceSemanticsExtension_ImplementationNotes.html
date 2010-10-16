@@ -128,6 +128,22 @@ Visit: <a href="http://github.com/nex3/haml/issues#issue/28">GitHub nex3 Haml Is
   should raise an error on the "down two spaces" line.
 </code></pre>
 
+<p>As preview, here is one WSE Haml interpretation. For alternatives,
+see the referenced code spec, and other rspec suites mentioned there:</p>
+
+<pre><code>
+  Code 4-04
+
+  %foo
+      up four spaces
+    down two spaces
+
+  &lt;foo&gt;
+    up four spaces
+    down two spaces
+  &lt;/foo&gt;
+</code></pre>
+
 <p>The extensions to whitespace semantics proposed in this document attempt
 to spell out the implementation of such a change, and its ramifications.</p>
 
@@ -413,7 +429,8 @@ generating HtmlOutput, will not further transform.</p></li>
 <p>A new helper, get/set the string used for a single 'tab' of the OutputIndent.</p></li>
 </ul>
 
-<p>As a quick preview of Haml with the WSE extensions, the following just works:</p>
+<p>As a quick preview of Haml with the WSE extensions, the following,
+with varying indent and nesting, just works:</p>
 
 <pre><code>
   Code 7.01
@@ -426,7 +443,9 @@ generating HtmlOutput, will not further transform.</p></li>
          cblock4 nested
 </code></pre>
 
-<p>As does this (which is the above, after a bit of maintenance):</p>
+<p>As does this, which is the above, perhaps after a bit of maintenance,
+exhibiting an undent that does not return to a prior level of
+indentation:</p>
 
 <pre><code>
   Code 7.02
@@ -439,6 +458,65 @@ generating HtmlOutput, will not further transform.</p></li>
 </code></pre>
 
 <p>In both cases, Haml sees what you mean, and creates spiffy HtmlOutput.</p>
+
+<pre><code>
+  &lt;div id='id1'&gt;
+    &lt;p&gt;cblock2&lt;/p&gt;
+    &lt;p&gt;cblock3&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div id='id2'&gt;
+    &lt;p&gt;cblock4
+      cblock4 nested
+    &lt;/p&gt;
+  &lt;/div&gt;
+
+
+  &lt;div id='id1'&gt;
+    &lt;p&gt;cblock2
+      cblock4 nested
+    &lt;/p&gt;
+    &lt;p&gt;cblock3&lt;/p&gt;
+    &lt;p&gt;cblock4&lt;/p&gt;
+  &lt;/div&gt;
+</code></pre>
+
+<p>The above shows the extension of Mixed Content to a full ContentModel type,
+with examples of the resulting rendered HtmlOutput showing the Inline
+portion of the Content rendered immediately after any Html start tag.</p>
+
+<p>Great ... but: the principles behind that change prompt a related change
+to the rendering of an Inline Content ContentBlock having newlines, such as
+can occur with interpolation, C<= expr>, or similar: like the above, the
+initial whitespace, and the initial text is rendered immediately after any
+Html start tag. For some Haml users, this will be WSE Haml's most obvious
+departure from the Legacy Haml rendering.</p>
+
+<pre><code>
+  Code 7-03
+
+  :strvar => "foo\nbar"
+
+  %p
+    = strvar
+  &lt;p&gt;
+    foo                        # Normalized indent, just as other cases
+    bar
+  &lt;/p&gt;
+
+  %p= strvar                   # WSE Haml: Start my var's content tight
+  &lt;p&gt;foo
+    bar                        # Normalized indent, just as other cases
+  &lt;/p&gt;
+
+  %p eggs #{strvar} spam
+  &lt;p&gt;eggs foo                  # Same mechanisms applied to previous case
+     bar spam
+  &lt;/p&gt;
+</code></pre>
+
+<p>These are taken from the Code 08-8 suite of sample code, below, which
+contains further examples and discussion.</p>
+
 
 <h2>Processing Model -- Haml Whitespace Semantics Extensions (WSE)</h2>
 
@@ -488,6 +566,31 @@ consistent with an executable language approach, terminates the entire
 rendering (in a full Java-esq cascade of errors). Under WSE, the lexer 
 (conceptually) runs to the end of the plausible branch, backtracks, 
 and fires that construct as plaintext. </p>
+
+<p>Legacy Haml generates an exception:</p>
+
+<pre><code>
+  Code 8.1-01
+
+  %div
+      %p #{varstr
+
+  Haml::SyntaxError,/Unbalanced brackets/
+</code></pre>
+
+<p>In WSE Haml, a construct is plaintext unless it fully satisfies some
+branch of the syntax:</p>
+
+<pre><code>
+  Code 8.1-02
+
+  %div
+      %p #{varstr
+
+  &lt;div&gt;
+    &lt;p&gt;#{varstr&lt;/p&gt;
+  &lt;/div&gt;
+</code></pre>
 
 <p>That is but one, albeit stark, example of an overall effect. The change 
 under WSE provides more expressive latitude for authors, less tedious 
@@ -1861,7 +1964,32 @@ WSE Haml will recognize and adjust for the cases that typically arise
   3. /-(-+)/                        '-' + ' ' * $1.length 
 </code></pre>
 
-<p>These cases are elaborated in the accompanying RSpec files.</p>
+Selected cases:
+
+<pre><code>
+  Code 9.3-02
+
+  .zork
+    %p para1
+    / plaintext html comment
+    %p para2
+    / comment with embedded --> html comment endtag
+    <p>para3</p>
+    / comment with embedded <!-- html comment starttag
+    <p>para4</p>
+    / comment with embedded --- serial hyphens
+
+  &lt;div class='zork'&gt;
+    &lt;p&gt;para1&lt;/p&gt;
+    &lt;!-- plaintext html comment --&gt;
+    &lt;p&gt;para2&lt;/p&gt;
+    &lt;!-- comment with embedded --&gt;&lt;!-- html comment endtag --&gt;
+    &lt;p&gt;para3&lt;/p&gt;
+    &lt;!-- comment with embedded --&gt;&lt;!-- html comment starttag --&gt;
+    &lt;p&gt;para4&lt;/p&gt;
+    &lt;!-- comment with embedded -   serial hyphens --&gt;
+  &lt;/div&gt;
+</code></pre>
 
 <h3>Multiline Text</h3>
 

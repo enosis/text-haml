@@ -135,6 +135,20 @@ Nex3 continues:
 
       should raise an error on the "down two spaces" line.
 
+As preview, here is one WSE Haml interpretation. For alternatives,
+see the referenced code spec, and other rspec suites mentioned there:
+
+      Code 4-04
+
+      %foo
+          up four spaces
+        down two spaces
+
+      <foo>
+        up four spaces
+        down two spaces
+      </foo>
+
 The extensions to whitespace semantics proposed in this document attempt
 to spell out the implementation of such a change, and its ramifications.
 
@@ -446,7 +460,8 @@ A new helper, get/set the string used for a single 'tab' of the OutputIndent.
 
 =back
 
-As a quick preview of Haml with the WSE extensions, the following just works:
+As a quick preview of Haml with the WSE extensions, the following,
+with varying indent and nesting, just works:
 
       Code 7-01
 
@@ -457,7 +472,9 @@ As a quick preview of Haml with the WSE extensions, the following just works:
         %p cblock4
              cblock4 nested
 
-As does this (which is the above, after a bit of maintenance):
+As does this, which is the above, perhaps after a bit of maintenance,
+exhibiting an undent that does not return to a prior level of
+indentation:
 
       Code 7-02
 
@@ -468,6 +485,60 @@ As does this (which is the above, after a bit of maintenance):
         %p cblock4
 
 In both cases, Haml sees what you mean, and creates spiffy HtmlOutput.
+
+      <div id='id1'>
+        <p>cblock2</p>
+        <p>cblock3</p>
+      </div>
+      <div id='id2'>
+        <p>cblock4
+          cblock4 nested
+        </p>
+      </div>
+
+
+      <div id='id1'>
+        <p>cblock2
+          cblock4 nested
+        </p>
+        <p>cblock3</p>
+        <p>cblock4</p>
+      </div>
+
+The above shows the extension of Mixed Content to a full ContentModel type,
+with examples of the resulting rendered HtmlOutput showing the Inline
+portion of the Content rendered immediately after any Html start tag.
+
+Great ... but: the principles behind that change prompt a related change
+to the rendering of an Inline Content ContentBlock having newlines, such as
+can occur with interpolation, C<= expr>, or similar: like the above, the
+initial whitespace, and the initial text is rendered immediately after any
+Html start tag. For some Haml users, this will be WSE Haml's most obvious
+departure from the Legacy Haml rendering.
+
+      Code 7-03
+
+      :strvar => "foo\nbar"
+
+      %p
+        = strvar
+      <p>
+        foo                        # Normalized indent, just as other cases
+        bar
+      </p>
+
+      %p= strvar                   # WSE Haml: Start my var's content tight
+      <p>foo
+        bar                        # Normalized indent, just as other cases
+      </p>
+
+      %p eggs #{strvar} spam
+      <p>eggs foo                  # Same mechanisms applied to previous case
+         bar spam
+      </p>
+
+These are taken from the Code 08-8 suite of sample code, below, which
+contains further examples and discussion.
 
 
 =head2 Processing Model -- Haml Whitespace Semantics Extensions (WSE)
@@ -518,6 +589,27 @@ consistent with an executable language approach, terminates the entire
 rendering (in a full Java-esq cascade of errors). Under WSE, the lexer 
 (conceptually) runs to the end of the plausible branch, backtracks, 
 and fires that construct as plaintext. 
+
+Legacy Haml generates an exception:
+
+      Code 8.1-01
+
+      %div
+          %p #{varstr
+
+      Haml::SyntaxError,/Unbalanced brackets/
+
+In WSE Haml, a construct is plaintext unless it fully satisfies some
+branch of the syntax:
+
+      Code 8.1-02
+
+      %div
+          %p #{varstr
+
+      <div>
+        <p>#{varstr</p>
+      </div>
 
 That is but one, albeit stark, example of an overall effect. The change 
 under WSE provides more expressive latitude for authors, less tedious 
@@ -1877,7 +1969,31 @@ WSE Haml will recognize and adjust for the cases that typically arise
       2. /<!--+/                        --><!--
       3. /-(-+)/                        '-' + ' ' * $1.length 
 
-These cases are elaborated in the accompanying RSpec files.
+
+Selected cases:
+
+      Code 9.3-02
+
+      .zork
+        %p para1
+        / plaintext html comment
+        %p para2
+        / comment with embedded --> html comment endtag
+        <p>para3</p>
+        / comment with embedded <!-- html comment starttag
+        <p>para4</p>
+        / comment with embedded --- serial hyphens
+
+      <div class='zork'>
+        <p>para1</p>
+        <!-- plaintext html comment -->
+        <p>para2</p>
+        <!-- comment with embedded --><!-- html comment endtag -->
+        <p>para3</p>
+        <!-- comment with embedded --><!-- html comment starttag -->
+        <p>para4</p>
+        <!-- comment with embedded -   serial hyphens -->
+      </div>
 
 
 =head3 Multiline Text
