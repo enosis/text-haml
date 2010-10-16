@@ -2,7 +2,7 @@
 #./text-haml/ruby/spec/
 #Calling: spec --color 00ImplementationNotes_spec.rb -f s
 #Authors: 
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
 # Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
@@ -22,7 +22,7 @@ end
 
 
 #================================================================
-describe HamlRender, "Shiny Things -01- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 3-01 -- Shiny Things:" do
   it "gee whiz" do
     #pending "WSE" do
       wspc = HamlRender.new
@@ -48,9 +48,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Motivation -01- Implementation Notes:" do
-  it "foo bar baz bang boom - legacy Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 4-01 -- Motivation:" do
+  it "Nex3 Issue 28 - 2-level indent - WSE Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -79,9 +79,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Motivation -02- Implementation Notes:" do
-  it "foo bar baz bang boom - WSE Haml, following Nex3 Issue 28" do
     pending "WSE" do
+describe HamlRender, "ImplNotes Code 4-04 -- Motivation:" do
+  it "Nex3 Issue 28 - 1-level indent - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -110,9 +110,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Motivation -03- Implementation Notes:" do
-  it "foo up four down two - following Nex3 Issue 28, legacy Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 4-03 -- Motivation:" do
+  it "Nex3 Issue 28 - Inconsistent indentation - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -133,8 +133,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Motivation -04- Implementation Notes:" do
-  it "foo up four down two - following Nex3 Issue 28, WSE Haml" do
+describe HamlRender, "ImplNotes Code 4-04 -- Motivation:" do
+  it "Nex3 Issue 28 - Inconsistent indentation (as plaintext) - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -158,8 +158,8 @@ end
 
 
 #================================================================
-describe HamlRender, "WSE In Brief -01- Implementation Notes:" do
-  it "cblock1, cblock2 indent nesting" do
+describe HamlRender, "ImplNotes Code 7-01 -- WSE In Brief:" do
+  it "Varying indent and nesting - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -191,8 +191,8 @@ end
 
 
 #================================================================
-describe HamlRender, "WSE In Brief -02- Implementation Notes:" do
-  it "cblock1, cblock2 UNDENT nesting" do
+describe HamlRender, "ImplNotes Code 7-02 -- WSE In Brief:" do
+  it "Irregular UNDENT - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -221,7 +221,7 @@ end
 
 
 #================================================================
-describe HamlRender, "Lexing and Syntactics -01- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 8.1-01 -- Lexing and Syntactics:" do
   it "Haml-as a Macro Language -- lexer tolerance" do
     #pending "WSE" do
       wspc = HamlRender.new
@@ -240,7 +240,7 @@ end
 
 
 #================================================================
-describe HamlRender, "Lexing and Syntactics -02- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 8.1-02 -- Lexing and Syntactics:" do
   it "Haml-as a Macro Language -- lexer tolerance - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
@@ -263,7 +263,7 @@ end
 
 
 #================================================================
-describe HamlRender, "Coarse Hierarchy -01- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 8.2-01 -- Coarse Hierarchy:" do
   it "Multiline -- Two blocks whiteline demarked" do
     pending "WSE" do
       wspc = HamlRender.new
@@ -293,8 +293,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Coarse Hierarchy -02- Implementation Notes:" do
-  it "Multiline -- Two blocks whiteline demarked" do
+describe HamlRender, "ImplNotes Code 8.2-02 -- Coarse Hierarchy:" do
+  it "Multiline -- Single block after Haml Comment removal" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -322,8 +322,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Coarse Hierarchy -03- Implementation Notes:" do
-  it "Multiline -- Two blocks, Multiple Whitelines - consolidated" do
+describe HamlRender, "ImplNotes Code 8.2-03 -- Coarse Hierarchy:" do
+  it "Multiline -- Two blocks, Multiple Whitelines consolidated" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -354,9 +354,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Elements -01- Implementation Notes:" do
-  it "Basic Element" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.3-01 -- Elements:" do
+  it "Basic Element - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -377,9 +377,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Elements -02- Implementation Notes:" do
-  it "cblock1 span cblock2" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.3-02 -- Elements:" do
+  it "Two-line nesting - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -406,9 +406,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Indentation -01- Implementation Notes:" do
-  it "Standard Legacy 2-space IndentStep" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.4-01 -- Indentation:" do
+  it "Standard Legacy 2-space IndentStep - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -439,9 +439,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Indentation -02- Implementation Notes:" do
-  it "cblock1, cblock2, cblock3, cblock4 Standard Legacy" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.4-02 -- Indentation:" do
+  it "Standard Legacy multiblock indent and undent - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -480,8 +480,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Indentation -03- Implementation Notes:" do
-  it "div-cblocks - OIR:strict" do
+describe HamlRender, "ImplNotes Code 8.4-03 -- Indentation:" do
+  it "Varying indent steps - OIR:strict - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -521,8 +521,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Indentation -04- Implementation Notes:" do
-  it "div-cblocks edited - OIR:strict" do
+describe HamlRender, "ImplNotes Code 8.4-04 -- Indentation:" do
+  it "Varying indent steps, edited - OIR:strict - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -557,8 +557,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Indentation -05- Implementation Notes:" do
-  it "div-cblocks edited - OIR:loose" do
+describe HamlRender, "ImplNotes Code 8.4-05 -- Indentation:" do
+  it "Varying indent, edited, arbitrary undent - OIR:loose - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -590,8 +590,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Indentation -06- Implementation Notes:" do
-  it "div-cblocks edited with div#id2 Offside - OIR:loose" do
+describe HamlRender, "ImplNotes Code 8.4-06 -- Indentation:" do
+  it "Varying indent, arbitrary undent; Offside - OIR:loose - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -625,9 +625,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Indentation -07- Implementation Notes:" do
-  it "Haml for Canonical Html " do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.4-07 -- Indentation:" do
+  it "Haml for Canonical Html File" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -653,8 +653,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -01- Implementation Notes:" do
-  it "Normalizing HtmlOutput Whitespace and Indentation" do
+describe HamlRender, "ImplNotes Code 8.8-01 -- Normalizing:" do
+  it "Mixed Content - HtmlOutput Whitespace and Indentation - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -679,8 +679,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -02- Implementation Notes:" do
-  it "Normalizing -- Tag with Mixed Content from Multiline Content Block" do
+describe HamlRender, "ImplNotes Code 8.8-02 -- Normalizing:" do
+  it "Mixed Content - ContentBlock from Multiline Content Block" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -706,9 +706,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -03- Implementation Notes:" do
-  it "Normalizing -- foo bar - Legacy Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.8-03 -- Normalizing:" do
+  it "Forced nesting of dynamic vars w/newlines - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -742,8 +742,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -04- Implementation Notes:" do
-  it "Normalizing -- foo bar - WSE Haml" do
+describe HamlRender, "ImplNotes Code 8.8-04 -- Normalizing:" do
+  it "Dynamic vars, Folding Inline plus Nesting - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -787,9 +787,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -05- Implementation Notes:" do
-  it "Normalizing -- foo bar - Interpolated Initial Whitespace - Legacy Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.8-05 -- Normalizing:" do
+  it "Dynamic var, Folded, Initial Whitespace - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -816,8 +816,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -06- Implementation Notes:" do
-  it "Normalizing -- foo bar - Interpolated Initial Whitespace - WSE Haml" do
+describe HamlRender, "ImplNotes Code 8.8-06 -- Normalizing:" do
+  it "Dynamic var, Folded; Initial Wspc Inline plus Nested - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -844,9 +844,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -07- Implementation Notes:" do
-  it "Normalizing -- Initial Whitespace - Preserve Tag - Not Preserved - Legacy Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.8-07 -- Normalizing:" do
+  it "Initial Whitespace - Preserve Tag - Not Preserved - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -872,8 +872,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -08- Implementation Notes:" do
-  it "Normalizing -- Initial Whitespace - Preserve Tag - Preserved - WSE Haml" do
+describe HamlRender, "ImplNotes Code 8.8-08 -- Normalizing:" do
+  it "Initial Whitespace - Preserve Tag - Preserved - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -900,9 +900,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -09- Implementation Notes:" do
-  it "Normalizing -- Html Endtag - Preserve Tag - Preserved - Legacy Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 8.8-09 -- Normalizing:" do
+  it "Html Endtag - Preserve Tag - Preserved - Legacy Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -928,8 +928,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -10- Implementation Notes:" do
-  it "Normalizing -- Html Endtag - Preserve Tag - Preserved - WSE Haml" do
+describe HamlRender, "ImplNotes Code 8.8-10 -- Normalizing:" do
+  it "Html Endtag - Preserve Tag - Preserved - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -955,8 +955,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -11- Implementation Notes:" do
-  it "Normalizing -- InitialWhitespace Plaintext - Preserve Tag - Preserved - WSE Haml" do
+describe HamlRender, "ImplNotes Code 8.8-11 -- Normalizing:" do
+  it "InitialWhitespace Plaintext - Preserve Tag - Preserved - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -980,8 +980,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Normalizing -12- Implementation Notes:" do
-  it "Normalizing -- Mixed Content Leading Whitespace in Expression - WSE Haml" do
+describe HamlRender, "ImplNotes Code 8.8-12 -- Normalizing:" do
+  it "Mixed Content Leading Whitespace in Expression - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1017,8 +1017,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Whitelines -01- Implementation Notes:" do
-  it "Normalizing -- Whitelines - WSE Haml" do
+describe HamlRender, "ImplNotes Code 8.9-01 -- Whitelines:" do
+  it "Whiteline Consolidation- WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1075,66 +1075,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Whitelines -02- Implementation Notes:" do
-  it "Normalizing -- Whitelines - WSE Haml" do
-    pending "WSE" do
-      wspc = HamlRender.new
-      h_opts = { :escape_html => false, 
-                 :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
-                 :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts )
-.quux
-    %div
-      %p cblock1
-      %p
-
-         cblock2a      
-
-      
-         cblock2b      
-
-         cblock2c
-
-
-      %p cblock3
-
-      %p cblock4inline
-         cblock4a
-          -#             # Inserted into Nested Content -- a Haml Comment
-           cblock4c      # Captured by Haml COmment as Nested Content ContentBlock
-
-           cblock4d
-HAML
-      wspc.html.should == <<'HTML'
-<div class='quux'>
-  <div>
-    <p>cblock1</p>
-    <p>
-      cblock2a
-
-      cblock2b
-      cblock2c
-    </p>
-
-    <p>cblock3</p>
-
-    <p>
-      cblock4inline
-      cblock4a
-      cblock4d
-    </p>
-  </div>
-</div>
-HTML
-    end
-  end
-end
-
-
-#================================================================
-describe HamlRender, "Heads - HamlComment -01- Implementation Notes:" do
-  it "Haml Comment - Lexeme" do
+describe HamlRender, "ImplNotes Code 9.2-01 -- Heads:HamlComment:" do
+  it "Lexeme BLM" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1174,9 +1116,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HamlComment -02- Implementation Notes:" do
-  it "Haml Comment - Lexeme" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 9.2-02 -- Heads:HamlComment:" do
+  it "Lexeme Separation" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -1208,8 +1150,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HamlComment -03- Implementation Notes:" do
-  it "Haml Comment - Structure - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.2-03 -- Heads:HamlComment:" do
+  it "Setup variable indent - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1252,8 +1194,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HamlComment -04- Implementation Notes:" do
-  it "Haml Comment - Structure: Haml Comment Mixed Content - Problematic - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.2-04 -- Heads:HamlComment:" do
+  it "Mixed Content - Problematic - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1302,8 +1244,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HamlComment -05- Implementation Notes:" do
-  it "Haml Comment - Structure: Haml Comment Mixed Content - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.2-05 -- Heads - HamlComment:" do
+  it "Mixed Content - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1349,8 +1291,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HtmlComment -01- Implementation Notes:" do
-  it "Html Comment - Producing well-formed Html - nested comment - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.3-01 -- Heads:HtmlComment:" do
+  it "Producing well-formed Html - nested comment - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1395,8 +1337,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HtmlComment -02- Implementation Notes:" do
-  it "Html Comment - Producing well-formed Html - improper content - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.3-02 -- Heads:HtmlComment:" do
+  it "Producing well-formed Html - improper content - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1452,8 +1394,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -01- Implementation Notes:" do
-  it "HereDoc - Base Case - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-01 -- Heads:HereDoc:" do
+  it "Base Case - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1487,8 +1429,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -02- Implementation Notes:" do
-  it "HereDoc - Term Indentation Case - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-02 -- Heads:HereDoc:" do
+  it "Terminator Indentation Case - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1522,8 +1464,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -03- Implementation Notes:" do
-  it "HereDoc - Case:Attributes first - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-03 -- Heads:HereDoc:" do
+  it "Attributes first - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1556,8 +1498,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -04- Implementation Notes:" do
-  it "HereDoc - Case:trim_out - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-04 -- Heads:HereDoc:" do
+  it "Case:trim_out - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1588,8 +1530,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -05- Implementation Notes:" do
-  it "HereDoc - Case: Textline Following HereDoc Term - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-05 -- Heads:HereDoc:" do
+  it "Case: Textline Following HereDoc Term - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1628,8 +1570,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -06- Implementation Notes:" do
-  it "HereDoc - Case: Textline Following HereDoc Term - Undented - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-06 -- Heads:HereDoc:" do
+  it "Case: Textline Following HereDoc Term - Undented - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1665,8 +1607,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -07- Implementation Notes:" do
-  it "HereDoc - Case: Exceptions - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-07 -- Heads:HereDoc:" do
+  it "Case: Exceptions - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1688,9 +1630,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -08- Implementation Notes:" do
-  it "HereDoc - Case: Exceptions - WSE Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 9.5-08 -- Heads:HereDoc:" do
+  it "Case: Exceptions - WSE Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -1711,8 +1653,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -09- Implementation Notes:" do
-  it "HereDoc - TODO: Possible content following term spec, example 1 - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-09 -- Heads:HereDoc:" do
+  it "TODO: Possible content following term spec, Example 1 - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1745,8 +1687,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -10- Implementation Notes:" do
-  it "HereDoc - TODO: Possible content following term spec - Example 2 - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-10 -- Heads:HereDoc:" do
+  it "TODO: Possible content following term spec, Example 2 - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1779,8 +1721,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - HereDoc -11- Implementation Notes:" do
-  it "HereDoc - TODO: Possible content following term spec - example 3 - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.5-11 -- Heads:HereDoc:" do
+  it "TODO: Possible content following term spec, Example 3 - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1813,9 +1755,9 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - Preserve -01- Implementation Notes:" do
-  it "Preserve starttag-endtag mechanics - WSE Haml" do
     #pending "WSE" do
+describe HamlRender, "ImplNotes Code 9.6-01 -- Heads:Preserve:" do
+  it "Starttag-Endtag mechanics - WSE Haml" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code', 'ptag'],
@@ -1856,8 +1798,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - Preserve -02- Implementation Notes:" do
-  it "Preformatted starttag-endtag mechanics - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.6-02 -- Heads:Preserve:" do
+  it "Starttag-endtag mechanics, for :preformatted - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1929,7 +1871,7 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - find_and_preserve -01- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 9.7-01 -- Heads:find_and_preserve:" do
   it "FAP - Basic examples" do
     #pending "WSE" do
       wspc = HamlRender.new
@@ -1956,7 +1898,7 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - find_and_preserve -02- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 9.7-02 -- Heads:find_and_preserve:" do
   it "FAP - Basic examples - html_escape:true" do
     pending "WSE" do
       wspc = HamlRender.new
@@ -1989,8 +1931,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - Tilde -01- Implementation Notes:" do
-  it "FAP & Tilde - Basic examples - html_escape:true - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.8-01 -- Heads:Tilde:" do
+  it "Basic examples - html_escape:true - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => true, 
@@ -2019,7 +1961,7 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - Whitespace Removal -01- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 9.15-01 -- Heads:Whitespace Removal:" do
   it "Simple WSE Haml Mixed Content" do
     pending "WSE" do
       wspc = HamlRender.new
@@ -2067,8 +2009,8 @@ end
 
 
 #================================================================
-describe HamlRender, "Heads - Whitespace Removal -02- Implementation Notes:" do
-  it "Whitespace removal - Trim_in - WSE Haml" do
+describe HamlRender, "ImplNotes Code 9.15-02 -- Heads:Whitespace Removal:" do
+  it "Trim_in - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => true, 
@@ -2110,7 +2052,7 @@ HTML
 end
 
 #================================================================
-describe HamlRender, "Heads - Whitespace Removal -03- Implementation Notes:" do
+describe HamlRender, "ImplNotes Code 9.15-03 -- Heads:Whitespace Removal:" do
   it "Trim_out Alignment - WSE Haml" do
     pending "BUG" do
       wspc = HamlRender.new

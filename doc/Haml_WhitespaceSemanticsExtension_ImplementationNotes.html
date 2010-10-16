@@ -24,7 +24,10 @@ Perl ... and the bugs do differ) are documented in this text.</p>
 
 <h2>Shiny Things</h2>
 
-<pre><code>  Haml                              Html
+<pre><code>  
+  Code 3-01
+
+  Haml                              Html
   ---------------------             -------------------------
   %gee                              &lt;gee&gt;
     %whiz                             &lt;whiz&gt;
@@ -89,6 +92,8 @@ Visit: <a href="http://github.com/nex3/haml/issues#issue/28">GitHub nex3 Haml Is
   We want to allow variable indentation as long as it's unambiguous. 
   For example, the following:
 
+  Code 4-01
+
   %foo
     %bar
         %baz
@@ -96,6 +101,8 @@ Visit: <a href="http://github.com/nex3/haml/issues#issue/28">GitHub nex3 Haml Is
         boom
 
   should be [rendered in HtmlOutput] the same as:
+
+  Code 4-02
 
   %foo
     %bar
@@ -111,6 +118,8 @@ Visit: <a href="http://github.com/nex3/haml/issues#issue/28">GitHub nex3 Haml Is
 
   Ambiguous cases should still be marked as erroneous. 
   For Example, the following
+
+  Code 4-03
 
   %foo
       up four spaces
@@ -406,7 +415,10 @@ generating HtmlOutput, will not further transform.</p></li>
 
 <p>As a quick preview of Haml with the WSE extensions, the following just works:</p>
 
-<pre><code>  %div#id1
+<pre><code>
+  Code 7.01
+
+  %div#id1
       %p cblock2
       %p cblock3
   %div#id2
@@ -416,7 +428,10 @@ generating HtmlOutput, will not further transform.</p></li>
 
 <p>As does this (which is the above, after a bit of maintenance):</p>
 
-<pre><code>  %div#id1
+<pre><code>
+  Code 7.02
+
+  %div#id1
       %p cblock2
          cblock4 nested
       %p cblock3
@@ -536,7 +551,10 @@ HtmlOutput).</p>
 
 <p>For example, under WSE Haml (modulo trailing and leading whitespace):</p>
 
-<pre><code>  %foo
+<pre><code>
+  Code 8.2-01
+
+  %foo
     First |
     Block |
 
@@ -547,7 +565,13 @@ HtmlOutput).</p>
     First Block
     Second Block
   &lt;/foo&gt;
+</code></pre>
 
+<p>WSE Haml processing mode: by the time the Multiline ContentBlock is
+processed, the Haml Comment is already removed:</p>
+
+<pre><code>
+  Code 8.2-02
 
   %foo
     First |
@@ -566,7 +590,10 @@ WSE processing model changes the semantics of Whitelines (of that
 second semantic frame) -- multiple Whitelines are consolidated to 
 a single Whiteline:</p>
 
-<pre><code>  %foo
+<pre><code>
+  Code 8.2-03
+
+  %foo
     First |
     Block |
 
@@ -589,7 +616,10 @@ of a Haml Comment. This is discussed in greater detail below.</p>
 
 <p>An Element:</p>
 
-<pre><code>  %p
+<pre><code>
+  Code 8.3-01
+
+  %p
     Text
 </code></pre>
 
@@ -608,7 +638,10 @@ indentation. Made explicit, with '.' representing indentation, an Element
 Head of '<code>....%span</code>' below an Element Head of '<code>..%p</code>' describes a parent-child
 relationship.</p>
 
-<pre><code>  ..%p 
+<pre><code>
+  Code 8.3-02
+
+  ..%p 
   ....cblock1
   ....%span cblock2
 
@@ -697,18 +730,24 @@ unnecessary for Haml.</p>
 <p>This abstract example shows a constant 2-space indent (the <strong>IndentStep</strong>)
 throughout. It is compatible with legacy Haml implementations.</p>
 
-<pre><code> HEAD1
-  HEAD2
-    HEAD3
-      Content1
-      Content2
-  UNDENTLINE
+<pre><code>
+  Code 8.4-01
+
+  HEAD1
+   HEAD2
+     HEAD3
+       Content1
+       Content2
+   UNDENTLINE
 </code></pre>
 
 <p>The following example observes the same rules. Below we'll annotate and 
 adjust it to demonstrate several aspects of WSE Haml.</p>
 
-<pre><code>  ..%div#id1
+<pre><code>
+  Code 8.4-02
+
+  ..%div#id1
   ....%p cblock1
   ....%div#a
   ......%p cblock2
@@ -741,7 +780,10 @@ immediate ContentBlock</em>. Under <em>OIR:strict</em>, the following is allowed
 Notice the changing size of the IndentStep (some might say it allows
 improved cosmetics in HamlSource):</p>
 
-<pre><code>  ..%div#id1
+<pre><code>
+  Code 8.4-03
+
+  ..%div#id1
   .....%div#a cblock1
   .....%div#b
   .........cblock2
@@ -759,7 +801,10 @@ with <code>%div#id2</code>.</p>
 <code>cblock2</code> and the <code>%p</code> element, leaving only the <code>cblock3</code> content. The 
 following also would conform to <em>OIR:strict</em>:</p>
 
-<pre><code>  ..%div#id1
+<pre><code>
+  Code 8.4-04
+
+  ..%div#id1
   .....%div#a cblock1
   .....%div#b
   ............cblock3
@@ -775,7 +820,10 @@ cousins.</p>
 perhaps after further maintenance, would conform (Yes, not a typo: the 
 Indentation of <code>%p cblock4</code> is only one more than that of <code>%div#b</code>.):</p>
 
-<pre><code>  ..%div#id1
+<pre><code>
+  Code 8.4-05
+
+  ..%div#id1
   .....%div#a cblock1
   .....%div#b
   ............cblock3
@@ -787,7 +835,8 @@ language, like WSE Haml, there is only one, unambiguous, interpretation of
 this HamlSource, for any Offside Rule-compliant substitution for <code>cblock3</code> 
 or <code>%p cblock4</code>: they are siblings. Haml gives:</p>
 
-<pre><code>  &lt;div id='id1'&gt;
+<pre><code>
+  &lt;div id='id1'&gt;
     &lt;div id='a'&gt;cblock1&lt;/div&gt;
     &lt;div id='b'&gt;
       cblock3
@@ -808,7 +857,8 @@ at the minimum Indentation which contains the complete definition of the
 related Element. At minimum, the Indentation for an Element's BLM
 equals the Head's Indentation + 1.</p>
 
-<pre><code>  ..%div#id1
+<pre><code>
+  ..%div#id1
   .....%div#a cblock1
   .....%div#b
   ............cblock3
@@ -824,7 +874,8 @@ constant: the Textlines will demarcate a single clear column. </p>
 <p>Under <em>OIR:loose</em>, however, the size of the IndentStep may vary even within 
 the immediate Element.</p>
 
-<pre><code>  ..%div#id1
+<pre><code>
+  ..%div#id1
   .....%div#a cblock1
   .....%div#b
   ............cblock3
@@ -844,7 +895,10 @@ as the first Textline to have Indentation less than the prevailing BLM
 
 <p>Still in <em>OIR:loose</em> (the default):</p>
 
-<pre><code>  0 00 000    1
+<pre><code>
+  Code 8.4-06
+
+  0 00 000    1
   0 23 567    2
   ..%div#id1
   .....%div#a cblock1
@@ -869,11 +923,14 @@ Undent between Indentation 5 and 3 would have had the same result.</p>
 and doctype macros, it would be most common for most Textlines to never go 
 Offside past the second BlockLeftMargin (here, demarcated by CONTENT): </p>
 
-<pre><code> 0 2 4
- %html
-   %head
-   %body
-     CONTENT
+<pre><code>
+  Code 8.4-07
+
+  0 2 4
+  %html
+    %head
+    %body
+      CONTENT
 </code></pre>
 
 <p>There is, of course, the potential for a variety of HamlSource whitespace
@@ -1228,14 +1285,18 @@ a bit of flexibility and even clearer code. But what about the related
 domain, that of HtmlOutput? For example, how shall this (newly-permitted in
 WSE Haml) be rendered?</p>
 
-<pre><code>  .flow
+<pre><code>
+  Code 8.8-01
+
+  .flow
     %p Inline content
        Nested content
 </code></pre>
 
 <p>Haml with WSE proposes we honor author choices:</p>
 
-<pre><code>  &lt;div class='flow'&gt;
+<pre><code>
+  &lt;div class='flow'&gt;
     &lt;p&gt;Inline content
       Nested content
     &lt;/p&gt;
@@ -1251,7 +1312,10 @@ HamlSource.</p>
 
 <p>Consider this (in legacy Haml, modulo whitespace bugs):</p>
 
-<pre><code>  %p First line  |
+<pre><code>
+  Code 8.8-02
+
+  %p First line  |
      Second line |
 
   &lt;p&gt;First line Second line&lt;/p&gt;
@@ -1265,7 +1329,10 @@ Haml Reference calls this "dynamically-generated":</p>
 <p>In legacy Haml (without resorting to the whitespace removal trim_in/out 
 cruft), the HtmlOutput processor imposes a change in surface structure:</p>
 
-<pre><code>  - strvar = "foo bar"
+<pre><code>
+  Code 8.8-03
+
+  - strvar = "foo bar"
   %p= strvar
   &lt;p&gt;foo bar&lt;/p&gt;
 
@@ -1287,7 +1354,10 @@ cruft), the HtmlOutput processor imposes a change in surface structure:</p>
 <p>The surprises are reduced under Haml with the WSE extensions, without the
 need for the find_and_preserve cruft:</p>
 
-<pre><code>  - strvar = "foobar"
+<pre><code>
+  Code 8.8-04
+
+  - strvar = "foobar"
   %p
     = strvar                  # WSE Haml: Always nest my var's content
   &lt;p&gt;
@@ -1321,12 +1391,21 @@ is inserted.</p>
 Inline Content begins with quoted or interpolated material having
 Initial Whitespaces.</p>
 
-<pre><code>  - strvar = "  foo\n   bar"
+<pre><code>
+  Code 8.8-05
+
+  - strvar = "  foo\n   bar"
   %p= strvar
   &lt;p&gt;
       foo                       # Legacy Haml
        bar      
   &lt;/p&gt;
+</code></pre>
+
+<p>WSE Haml handling of Initial Whitespace in quoted or interpolated material:</p>
+
+<pre><code>
+  Code 8.8-06
 
   %p= strvar
   &lt;p&gt;  foo                      # WSE Haml
@@ -1338,12 +1417,21 @@ Initial Whitespaces.</p>
 extension in WSE Haml is to replay the author's input, <em>preserving</em> the
 Initial Whitespace:</p>
 
-<pre><code>  :preserve =&gt; ['code']
+<pre><code>
+  Code 8.8-07
+
+  :preserve =&gt; ['code']
   .quux
     - strvar = "   foo\n   bar"
     %code= strvar
 
   &lt;div class='quux'&gt;\n  &lt;code&gt;foo ...       # Legacy Haml fails to preserve
+</code></pre>
+
+<p>WSE Haml replays the Initial Whitespace:</p>
+
+<pre><code>
+  Code 8.8-08
 
   .quux
     %code= strvar
@@ -1364,13 +1452,22 @@ a change from elision to surjection). The result will not produce a
 difference in the rendering by an Html- or CSS-conformant renderer, unless
 by author CSS control ... which would now be possible.</p>
 
-<pre><code>  .quux
+<pre><code>
+  Code 8.8-09
+
+  .quux
     - strvar = "   foo\n   bar  \n\n"
     %code= strvar
 
   &lt;div class='quux'&gt;                            # Legacy Haml fails to preserve
     &lt;code&gt;foo&amp;#x000A;   bar&lt;/code&gt;
   &lt;/div&gt;
+</code></pre>
+
+<p>WSE Haml consolidates the trailing newlines, then transforms:</p>
+
+<pre><code>
+  Code 8.8-10
 
   .quux
     - strvar = "   foo\n   bar  \n\n"
@@ -1409,7 +1506,10 @@ after the tag the associated, obligatory, single whitespace. (And, of course,
 trailing whitespace: in the example below there is also Trailing Whitespace 
 of two spaces.)</p>
 
-<pre><code>  :preserve =&gt; ['code']
+<pre><code>
+  Code 8.8-11
+
+  :preserve =&gt; ['code']
   %code   Foobar               # Notice: "%code " and "  Foobar  "
 
   &lt;code&gt;  Foobar  &lt;/code&gt;      # WSE Haml, notice 2 space Initial WSPC
@@ -1423,7 +1523,10 @@ lines of Mixed Content, however, the space at the left of the Textline
 (leading whitespace) is taken as an IndentStep ... so any whitespace in 
 addition to that must be provided through expression or interpolation.</p>
 
-<pre><code>  :preserve =&gt; ['code']
+<pre><code>
+  Code 8.8-12
+
+  :preserve =&gt; ['code']
   - strvar = "   foo\n     bar  \n"
   %code= strvar
   %cope= strvar               # Arbitrary tag
@@ -1464,7 +1567,10 @@ as the usual Offsides); see more about the Haml Comment model, below.</p>
 spacing. Such control is useful in literal text, but also where content
 will be interpolated or computed, including possibly null productions.</p>
 
-<pre><code>  %div
+<pre><code>
+  Code 8.9-01
+
+  %div
     %p cblock1
     %p
                      # Leading Whiteline is removed
@@ -1545,7 +1651,10 @@ modified Offside Rule: regardless of the IndentStep, the BlockLeftMargin
 is established at the minimum Indentation: the Indentation of the 
 Haml Comment lexeme, plus 1:</p>
 
-<pre><code>  0123
+<pre><code>
+  Code 9.2-01
+
+  0123
   -# Haml Comment Inline
    ^
    | BlockLeftMargin, the reference for the Offside Rule in Haml Comments
@@ -1583,7 +1692,10 @@ the RSpec test files.</p>
 by whitespace. The Haml Comment lexeme "-#" need not be. The following
 are two legal (in legacy, and supported in WSE) Haml Comments:</p>
 
-<pre><code>  -# Text comment
+<pre><code>
+  Code 9.2-02
+
+  -# Text comment
   -#Text comment
 </code></pre>
 
@@ -1618,7 +1730,10 @@ grown under WSE. </p>
 <p>Consider the following Haml, perhaps program-generated. We have <code>%scat</code> 
 categories, each with three children (oir:loose).</p>
 
-<pre><code>  %esku
+<pre><code>
+  Code 9.2-03
+
+  %esku
     %skulist
       %scat Lights
                  %sid 20301
@@ -1637,7 +1752,10 @@ ambiguity and without changes to the indentation of the HamlSource.</p>
 up on SO) where an Inline <em>or</em> Nested Content Model for Haml Comments 
 would have been better:</p>
 
-<pre><code>  %esku
+<pre><code>
+  Code 9.2-04
+
+  %esku
     %skulist
       %scat Lights
                  %sid 20301
@@ -1657,7 +1775,10 @@ particular XML author's obsession. The solution under WSE is similar to what
 the author would have done if trying a Nested-only approach: in WSE you have
 to add a line, a Whiteline. </p>
 
-<pre><code>  %esku
+<pre><code>
+  Code 9.2-05
+
+  %esku
     %skulist
       %scat Lights
                  %sid 20301
@@ -1699,7 +1820,10 @@ Offside Rule: regardless of the IndentStep, the BlockLeftMargin is
 established at the minimum Indentation: the Indentation of the 
 Html Comment lexeme, plus 1:</p>
 
-<pre><code>  0123
+<pre><code>
+  Code 9.3-01
+
+  0123
   / Html Comment Inline
    ^
    | BlockLeftMargin, the reference for the Offside Rule
@@ -1790,7 +1914,10 @@ effects (including Offside) are suspended. </p>
 -code, and so on. It is processed for interpolation (as if a double-quoted 
 string).</p>
 
-<pre><code>  %body
+<pre><code>
+  Code 9.5-01
+
+  %body
     %dir
       %dir
         %p&lt;&lt;DOC
@@ -1818,7 +1945,10 @@ string).</p>
 <p>An extended syntax is provided, permitting indentation of the terminal 
 delimiter:</p>
 
-<pre><code>  %body
+<pre><code>
+  Code 9.5-02
+
+  %body
     %dir
       %dir
         %p&lt;&lt;-DOC
@@ -1834,10 +1964,19 @@ delimiter:</p>
 <p>When mixed with other components of Head syntax, the HereDoc lexeme falls
 last:</p>
 
-<pre><code>  %p{:a =&gt; 'b',
+<pre><code>
+  Code 9.5-03
+
+  %p{:a =&gt; 'b',
      :y =&gt; 'z'}&lt;&lt;DOC
   HereDoc Para
   DOC
+</code></pre>
+
+<p>Here with the trim_out lexeme:</p>
+
+<pre><code>
+  Code 9.5-04
 
   %p&gt;&lt;&lt;DOC
   HereDoc Para
@@ -1852,7 +1991,10 @@ Indentation than the Element's Head). Notice that the relevant
 Indentation is with respect to the Element's Head not the HereDoc 
 Terminator.</p>
 
-<pre><code>  As a sibling:
+<pre><code>
+  Code 9.5-05
+
+  As a sibling:
 
   %body
     %dir
@@ -1872,10 +2014,13 @@ Terminator.</p>
       &lt;/dir&gt;
     &lt;/dir&gt;
   &lt;/body&gt;
+</code></pre>
 
+<p>Undented with respect to the Element's Head, so as a child of
+a common ancestor:</p>
 
-  Undented with respect to the Element's Head, 
-  so as a child of a common ancestor:
+<pre><code>
+  Code 9.5-06
 
   %body
     %dir
@@ -1905,9 +2050,18 @@ and are therefore prohibited, halting Haml processing with an exception
 (because to simply warn or otherwise continue could lead to unnoticed 
 missing content in the HtmlOutput):</p>
 
-<pre><code>  %img&lt;&lt;DOC        # %img is included in autoclose; no content
+<pre><code>
+  Code 9.5-07
+
+  %img&lt;&lt;DOC        # %img is included in autoclose; no content
   HereDoc
   DOC
+</code></pre>
+
+<p>Inline autoclose lexeme:</p>
+
+<code><pre>
+  Code 9.5-08
 
   %sku/&lt;&lt;DOC       # Make %sku autoclose, so no content
   HereDoc
@@ -1928,7 +2082,10 @@ this possibility (and would give better results with "&lt;" and ">"), although
 there doesn't seem a particularly strong use case, and perhaps there's 
 another better use for that slot.</p>
 
-<pre><code>  TODO: Candidate capability for content following the HereDoc token
+<p>TODO: Candidate capability for content following the HereDoc token</p>
+
+<pre><code>
+  Code 9.5-09
 
   %span.red&lt;&lt;DOC.
   HereDoc Para
@@ -1937,8 +2094,12 @@ another better use for that slot.</p>
   &lt;spam class='red'&gt;
   HereDoc Para
   &lt;/p&gt;.
+</code></pre>
 
-  TODO: Candidate capability for content following the HereDoc token
+<p>TODO: Candidate capability for content following the HereDoc token</p>
+
+<pre><code>
+  Code 9.5-10
 
   *
   %span.ital&lt;&lt;-DOC *
@@ -1949,8 +2110,12 @@ another better use for that slot.</p>
   &lt;span class='ital'&gt;
             HereDoc Para
   &lt;/span&gt; *
+</code></pre>
 
-  TODO: Candidate capability for content following the HereDoc token
+<p>TODO: Candidate capability for content following the HereDoc token</p>
+
+<pre><code>
+  Code 9.5-11
 
   - punct = '...'
   %span &lt;&lt;DOC#{punct}
@@ -2022,7 +2187,10 @@ mechanics will run the element's content <em>inline</em> with the start tag and
 end tag (including when supplying a <code>filter:preserve</code> content block);
 Preformatted mechanics will run the element's content <em>nested</em>.</p>
 
-<pre><code>  :preserve =&gt; ['ptag']
+<pre><code>
+  Code 9.6-01
+
+  :preserve =&gt; ['ptag']
 
   .wspcpre
   %snap
@@ -2054,7 +2222,10 @@ difference after the IndentStep is removed (legacy Haml file-global,
 or WSE Haml OIR-calculated). Here, in legacy Haml, the IndentStep is 2,
 so the remainder is 2, and that Initial Whitespace is replayed.</p>
 
-<pre><code>  :preformatted = ['vtag']
+<pre><code>
+  Code 9.6-02
+
+  :preformatted = ['vtag']
 
   .wspcpre
     %snap
@@ -2128,7 +2299,10 @@ normalizing whitespace in HtmlOutput.</p>
 
 <p>Here is an example from the Haml Reference (for "~ expr"), and variants:</p>
 
-<pre><code>  options: preserve =&gt; 'pre', html_escape =&gt; false
+<pre><code>
+  Code 9.7-01
+
+  options: preserve =&gt; 'pre', html_escape =&gt; false
   %zot
     = find_and_preserve("Foo\n&lt;pre&gt;Bar\nBaz&lt;/pre&gt;")
     = find_and_preserve("Foo\n%Bar\nBaz")
@@ -2138,7 +2312,8 @@ normalizing whitespace in HtmlOutput.</p>
 <p>Legacy Haml gives this result, which since it lacks Initial or 
 Trailing Whitespace, and trailing newlines, is the same in WSE Haml:</p>
 
-<pre><code>  &lt;zot&gt;
+<pre><code>
+  &lt;zot&gt;
     Foo\n  &lt;pre&gt;Bar&amp;#x000A;Baz&lt;/pre&gt;
     Foo\n  %Bar\n  Baz
     Foo\n  &lt;xre&gt;Bar\n    Baz&lt;/xre&gt;
@@ -2149,7 +2324,10 @@ Trailing Whitespace, and trailing newlines, is the same in WSE Haml:</p>
 fix for producing HtmlOutput that's escaped, which prevents escaping an 
 already-escaped entity:</p>
 
-<pre><code>  option: preserve =&gt; 'pre', html_escape =&gt; true
+<pre><code>
+  Code9.7-02
+
+  option: preserve =&gt; 'pre', html_escape =&gt; true
 
   &lt;zot&gt;
     Foo\n  &amp;lt;pre&amp;gt;Bar&amp;#x000A;Baz&amp;lt;/pre&amp;gt;
@@ -2166,22 +2344,25 @@ already-escaped entity:</p>
 case when the author requests escaped HtmlOutput, correcting a difference
 in legacy Haml between find_and_preserve and the tilde operator:</p>
 
-<pre><code>  options: preserve =&gt; 'pre', html_escape =&gt; true
+<pre><code>
+  Code 9.8-01
+
+  options: preserve =&gt; 'pre', html_escape =&gt; true
   %zot
     ~ "Foo\n&lt;pre&gt;Bar\nBaz&lt;/pre&gt;"
-</code></pre>
 
-<p>The buggy legacy Haml result:</p>
+  The buggy legacy Haml result:
 
-<pre><code>  &lt;zot&gt;
+  &lt;zot&gt;
     Foo\n  &amp;lt;pre&amp;gt;Bar\n  Baz\n&amp;lt;/pre&amp;gt;
   &lt;/zot&gt;
-</code></pre>
 
-<p>In WSE Haml the 'interior' newline is transformed and escaped, producing 
-the same result as for (the WSE-adjusted) find_and_preserve:</p>
+  In WSE Haml the 'interior' newline is transformed and escaped, 
+  producing the same result as for (the WSE-adjusted) 
+  find_and_preserve, plus no whitespace normalization is performed
+  (i.e., no added whitespace):
 
-<pre><code>  &lt;zot&gt;
+  &lt;zot&gt;
     Foo\n  &amp;lt;pre&amp;gt;Bar&amp;#x000A;Baz&amp;lt;/pre&amp;gt;
   &lt;/zot&gt;
 </code></pre>
@@ -2268,7 +2449,10 @@ honor author decisions about Inline content--copying the Inline Content
 onto the same HtmlOutput line as the Head, which for the tag-start end
 produces the same effect as the <em>trim</em>in_ operator.</p>
 
-<pre><code>  %bac
+<pre><code>
+  Code 9.15-01
+
+  %bac
     %p Foo                     # WSE Haml Mixed Content
       Bar
       Baz
@@ -2289,7 +2473,12 @@ produces the same effect as the <em>trim</em>in_ operator.</p>
       Gorp
     &lt;/p&gt;
   &lt;/saus&gt;
+</code></pre>
 
+<p>Trim_in with WSE Haml:</p>
+
+<pre><code>
+  Code 9.15-02
 
   %eggs
     %div
@@ -2326,7 +2515,10 @@ produces the same effect as the <em>trim</em>in_ operator.</p>
 endtags are not symmetrically aligned with the starttags. The following
 example shows how WSE Html will render the Html.</p>
 
-<pre><code>  %p
+<pre><code>
+  Code 9.15-03
+
+  %p
   %out
     %div&gt;
       %in
