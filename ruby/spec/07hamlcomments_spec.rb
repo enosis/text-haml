@@ -1,21 +1,14 @@
 #07hamlcomments_spec.rb
 #./text-haml/ruby/spec/
-#Calling: spec --color 07hamlcomments_spec.rb -f s
+#Calling: spec --color spec/07hamlcomments_spec.rb -f s
 #Authors:
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "   variable2  \n  twolines   "
-
-def expr1(arg = "expr1arg" )
-  "__" + arg + "__"
-end
+require "./HamlRender"
 
 #Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
 #Notice: Trailing whitespace is present on some Textlines
@@ -129,7 +122,7 @@ HTML
   end
 end
 #WSE: WSExtensions permit any indentation in HamlComments, provided 
-#     the contentblock abides Offside Rule at preset BLM (Head+1)
+#     the contentblock abides Offside Rule at preset BOD (Head+1)
 
 
 #================================================================
@@ -198,7 +191,7 @@ HTML
     end
   end
 end
-#WSE: WSExtensions permit any indentation, provided abides BLM/Offside Rule
+#WSE: WSExtensions permit any indentation, provided abides BOD/Offside Rule
 
 
 #================================================================
@@ -378,7 +371,7 @@ HTML
 end
 #By comparison to the above, this RSpec shows how the minimum extent of 
 #  the Haml Comment must be interpreted under Nesting Content rules 
-#  ... so a new BLM is established and prevails until Offsides or Whiteline
+#  ... so a new BOD is established and prevails until Offsides or Whiteline
 #  (see below) 
 #Authors have two ways of commenting-out in such contexts, including
 #  'ordinary' Haml tags (%p, etc).

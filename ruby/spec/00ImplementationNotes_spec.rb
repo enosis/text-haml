@@ -1,21 +1,16 @@
 #00ImplementationNotes_spec.rb
 #./text-haml/ruby/spec/
 #Calling: spec --color 00ImplementationNotes_spec.rb -f s
+#See also: 00ImplNotes_Codexx_yy-nn_spec.rb
+#
 #Authors: 
 # enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
-#
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
+#DEPRECATED, use Rake: rake spec:suite:code_x_y; see ../Rakefile
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "variable2  \ntwolines   "
-
-def expr1(arg = "expr1arg" )
-  "__" + arg + "__"
-end
+require "./HamlRender"
 
 #Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
 #Notice: Trailing whitespace is present on some Textlines
@@ -41,7 +36,6 @@ HAML
   </whiz>
 </gee>
 HTML
-    #end
   end
 end
 
@@ -76,6 +70,7 @@ HTML
   end
 end
 #Legacy Haml: Haml::SyntaxError, /The line.*indented.*levels deeper.*previous line/
+#WSE Haml renders this HamlSource same as the following (Code 4-02)
 
 
 #================================================================
@@ -105,6 +100,7 @@ HAML
 HTML
   end
 end
+#Legacy Haml: the same result is expected in Code 4-01, 2-level indent
 
 
 #================================================================
@@ -154,11 +150,12 @@ HTML
   end
 end
 #Same as preceding spec Code 4-03, but this run is prepared for WSE Haml
-#WSE Haml results depends on options and substitution for the phrases "up four spaces" etc. 
+#WSE Haml results for the 'preformatted' facility depends  on the mechanism
+# chosen, and on options and substitution for the phrases "up four spaces" etc.
 #
 # 1. Legacy Haml: SyntaxError -- Inconsistent Indentation (as above in Code 4-03)
 #
-# 2. WSE Haml: either or both pharases as: a. plaintext or b. substituted as tag: 
+# 2. WSE Haml: either or both pharases as: a. plaintext or b. substituted as atag:
 #       Single InputIndent yields single OutputIndent, leading whitespace removed
 #    <foo>
 #      up four spaces
@@ -167,13 +164,39 @@ end
 # Further examples and variants: see Code 7-01, Code 7-02 , Code 8.4-02 thru Code 8.4-06
 #
 # 3. WSE Haml: with option:preformatted => ['foo'] (interpolation, no tag processing)
-#       Output relative to HamlSource tag BLM
+#       HtmlOutput: block is shifted left to 0 Margin
 #       - see other specs, including 03nesting_spec.rb, 05preformatted_spec.rb
+#    <foo>
+#      up four spaces
+#    down two spaces
+#    </foo>
+#
+# 4. WSE Haml: with HereDoc
+#       HtmlOutput: Indentation and nesting is replayed
+#    %foo<<DOC
+#        up four spaces
+#      down two spaces
+#    DOC
 #    <foo>
 #        up four spaces
 #      down two spaces
 #    </foo>
 #
+# 5. WSE Haml: with filter:preformatted
+#       HamlSource:
+#          - IndentStep of parent establishes the :preformatted Onside Ref
+#            (This is Legacy Haml's algorithm, except in Legacy IndentStep is constant)
+#          - That IndentStep is removed from the Leading Whitespace
+#    %foo
+#      :preformatted
+#          up four spaces
+#        down two spaces
+#    DOC
+#    <foo>
+#        up four spaces
+#      down two spaces
+#    </foo>
+
 
 
 #================================================================
@@ -285,7 +308,7 @@ HAML
     bar
   </p>
   <p>eggs foo
-     bar spam
+    bar spam
   </p>
 </div>
 HTML
@@ -347,6 +370,8 @@ HTML
     end
   end
 end
+#WSE Haml: a construct is plaintext unless it fully satisfies some
+#          branch of the syntax:
 
 
 #================================================================
@@ -465,6 +490,31 @@ end
 describe HamlRender, "ImplNotes Code 8.3-02 -- Elements:" do
   it "Two-line nesting - Legacy Haml" do
       wspc = HamlRender.new
+      h_opts = { :escape_html => false,
+                 :preserve => ['pre', 'textarea', 'code'],
+                 :preformatted => ['ver'],
+                 :oir => 'loose' }
+      wspc.render_haml( <<'HAML', h_opts )
+%div
+  %p
+    cblock1
+    %span cblock2
+HAML
+      wspc.html.should == <<'HTML'
+<div>
+  <p>
+    cblock1
+    <span>cblock2</span>
+  </p>
+</div>
+HTML
+  end
+end
+#<div>\n  <p>\n    cblock1\n    <span>cblock2</span>\n  </p>\n</div>
+#================================================================
+describe HamlRender, "ImplNotes Code 8.3-02 -- Elements:" do
+  it "Two-line nesting - Legacy Haml" do
+      wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
@@ -556,6 +606,9 @@ HAML
 HTML
   end
 end
+#Legacy Haml
+#Compare with next spec, Code 8.4-03, which has variable indentation,
+#  and the following specs
 
 
 #================================================================
@@ -566,7 +619,7 @@ describe HamlRender, "ImplNotes Code 8.4-03 -- Indentation:" do
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
-                 :oir => 'loose' }
+                 :oir => 'strict' }
       wspc.render_haml( <<'HAML', h_opts )
 %div
   %div#id1
@@ -597,6 +650,9 @@ HTML
     end
   end
 end
+#WSE Haml - Variable indent, with oir:strict (no irregular undent)
+#Compare with specs: previous Code 8.4-02, and next Code 8.4-04, and
+#  the following Code 8.4-05 (oir:loose), and Code 8.4-06
 
 
 #================================================================
@@ -607,7 +663,7 @@ describe HamlRender, "ImplNotes Code 8.4-04 -- Indentation:" do
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
-                 :oir => 'loose' }
+                 :oir => 'strict' }
       wspc.render_haml( <<'HAML', h_opts )
 %div
   %div#id1
@@ -633,6 +689,9 @@ HTML
     end
   end
 end
+#WSE Haml
+#Compare with specs: previous Code 8.4-02, Code 8.4-03, and next Code 8.4-05,
+#  and the following Code 8.4-06 (oir:loose, arbitrary undent)
 
 
 #================================================================
@@ -666,6 +725,9 @@ HTML
     end
   end
 end
+#WSE Haml
+#Compare with specs: previous Code 8.4-02, Code 8.4-03, Code 8.4-04
+#  and the following Code 8.4-06
 
 
 #================================================================
@@ -701,6 +763,10 @@ HTML
     end
   end
 end
+#WSE Haml
+# oir:loose, with arbitrary undent
+#Compare with specs: previous Code 8.4-02, Code 8.4-03, Code 8.4-04
+#  and the following Code 8.4-06
 
 
 #================================================================
@@ -753,6 +819,11 @@ HTML
     end
   end
 end
+#Legacy Haml:
+# Haml::SyntaxError,
+# /Inconsistent indentation:.*spaces.*used for indentation, but.*rest.*doc.* using 4 spaces/
+#WSE Haml:
+# Admits Mixed Content; HtmlOutput formatted similar to Multiline (or other Inline-with-newline)
 
 
 #================================================================
@@ -766,9 +837,8 @@ describe HamlRender, "ImplNotes Code 8.8-02 -- Normalizing:" do
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %div
-  %p
-    First line  |
-    Second line |
+  %p First line  |
+     Second line |
 HAML
       wspc.html.should == <<'HTML'
 <div>
@@ -779,7 +849,9 @@ HTML
   end
 end
 #Legacy Haml:
-#<div>\n  <p>\n    First line  Second line \n  </p>\n</div>
+#<div>\n  <p>First line  Second line</p>\n</div>
+#WSE Haml:
+# Equiv Legacy Haml, with whitespace adjustment
 
 
 #================================================================
@@ -814,6 +886,7 @@ HAML
 HTML
   end
 end
+#Compare the eggs..spam escample to WSE Haml, below in Code 8.8-04.
 
 
 #================================================================
@@ -835,6 +908,8 @@ describe HamlRender, "ImplNotes Code 8.8-04 -- Normalizing:" do
     = strvar
   - strvar = "foo\nbar"
   %p= strvar
+  - strvar = "foo\nbar"
+  %p eggs #{strvar} spam
 HAML
       wspc.html.should == <<'HTML'
 <div class='quux'>
@@ -848,16 +923,29 @@ HAML
   <p>foo
     bar
   </p>
+  <p>eggs foo
+    bar spam
+  </p>
 </div>
 HTML
     end
   end
 end
+#WSE Haml:
+#  First case:  Always nest my var's content
+#  Second case: Nest my var's content, and normalize just like would otherwise
+#  Third case:  Differs from Legacy Haml
+#               Start my var's content inline; normalize just like other indents...but:
+#               (but: if in option:preserve or option:preformatted, use those indent rules)
+#  Fourth case: Differs from Legacy Haml (see prior spec)
+#               Start my var's content inline; normalize just like other indents...but:
+#               (but: if in option:preserve or option:preformatted, use those indent rules)
 #Legacy Haml:
 #<div class='quux'>
 #  <p>\n    foobar\n  </p>
 #  <p>\n    foo\n    bar\n  </p>
 #  <p>\n    foo\n    bar\n  </p>
+#  <p>\n    eggs foo\n    bar spam\n  </p>
 #</div>
 
 
@@ -869,9 +957,8 @@ describe HamlRender, "ImplNotes Code 8.8-05 -- Normalizing:" do
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts )
+      wspc.render_haml( <<'HAML', h_opts, :strvar => "  foo\n   bar" )
 .quux
-  - strvar = "  foo\n   bar"
   %p= strvar
 HAML
       wspc.html.should == <<'HTML'
@@ -884,7 +971,9 @@ HAML
 HTML
   end
 end
-#WSE Haml
+#Legacy Haml (this case):
+#<div class='quux'>\n  <p>\n      foo\n       bar\n  </p>\n</div>
+#WSE Haml (next case - Code08_8-06):
 #<div class='quux'>\n  <p>  foo\n       bar\n  </p>\n</div>
 
 
@@ -897,9 +986,8 @@ describe HamlRender, "ImplNotes Code 8.8-06 -- Normalizing:" do
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts )
+      wspc.render_haml( <<'HAML', h_opts, :strvar => "  foo\n   bar" )
 .quux
-  - strvar = "  foo\n   bar"
   %p= strvar
 HAML
       wspc.html.should == <<'HTML'
@@ -912,7 +1000,9 @@ HTML
     end
   end
 end
-#Legacy:
+#WSE Haml (this case):
+#<div class='quux'>\n  <p>  foo\n       bar\n  </p>\n</div>
+#Legacy (prior case - Code08_8-05):
 #<div class='quux'>\n  <p>\n      foo\n       bar\n  </p>\n</div>
 
 
@@ -924,9 +1014,8 @@ describe HamlRender, "ImplNotes Code 8.8-07 -- Normalizing:" do
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts )
+      wspc.render_haml( <<'HAML', h_opts, :strvar => "   foo\n   bar" )
 .quux
-  - strvar = "   foo\n   bar"
   %code= strvar
 HAML
       wspc.html.should == <<'HTML'
@@ -936,7 +1025,10 @@ HAML
 HTML
   end
 end
-#WSE Haml:
+#Notice: In this case strvar has initial whitespace of 3 characters
+#Legacy Haml: Focus here is just the dropping of the Initial Whitespace,
+#   the space before the "foo"
+#WSE Haml: replays that Initial Whitespace in this case:
 #<div class='quux'>
 #  <code>   foo&#x000A;   bar</code>
 #</div>
@@ -951,9 +1043,8 @@ describe HamlRender, "ImplNotes Code 8.8-08 -- Normalizing:" do
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts )
+      wspc.render_haml( <<'HAML', h_opts, :strvar => "   foo\n   bar" )
 .quux
-  - strvar = "   foo\n   bar"
   %code= strvar
 HAML
       wspc.html.should == <<'HTML'
@@ -964,7 +1055,7 @@ HTML
     end
   end
 end
-#Legacy:
+#Legacy Haml: Drops the Initial Whitespace
 #<div class='quux'>
 #  <code>foo&#x000A;   bar</code>
 #</div>
@@ -990,7 +1081,8 @@ HAML
 HTML
   end
 end
-#WSE Haml
+#Legacy Haml: Drops the trailing newlines
+#WSE Haml (next spec Code 8.8-10): consolidates the trailing newlines, then transforms
 #<div class='quux'>
 #  <code>   foo&#x000A;   bar  &#x000A;</code>
 #</div>
@@ -1018,6 +1110,8 @@ HTML
     end
   end
 end
+#WSE Haml: Conolidates the trailing newlines, then transforms
+#Legacy Haml (previous spec Code 8.8-09) -- Drops trailing newlines
 #<div class='quux'>
 #  <code>foo&#x000A;   bar</code>
 #</div>
@@ -1057,18 +1151,16 @@ describe HamlRender, "ImplNotes Code 8.8-12 -- Normalizing:" do
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts )
+      wspc.render_haml( <<'HAML', h_opts, "   foo\n     bar  \n" )
 .quux
-  - strvar = "   foo\n     bar  \n"
   %code= strvar
   %cope= strvar
 HAML
       wspc.html.should == <<'HTML'
 <div class='quux'>
   <code>   foo&#x000A;     bar  \n</code>
-  <cope> 
-    foo
-    bar
+  <cope>   foo
+    bar  
   </cope>
 </div>
 HTML
@@ -1076,8 +1168,9 @@ HTML
   end
 end
 #Notice: For WSE Haml, with non-option:preserve tag <cope>:
-#  Under oir:loose or oir:strict
-#  Only 1 OutputIndentStep (defaulted at 2)
+# 1. The Inline, with Initial Whitespace follows Code 8.8-04 and Code 8.8-06
+# 2. Under oir:loose or oir:strict
+#    Only 1 OutputIndentStep (defaulted at 2)
 #Legacy:
 #<div class='quux'>
 #  <code>foo&#x000A;     bar</code>
@@ -1113,7 +1206,7 @@ describe HamlRender, "ImplNotes Code 8.9-01 -- Whitelines:" do
       %p cblock4inline
          cblock4a
           -#             # Inserted into Nested Content -- a Haml Comment
-           cblock4c      # Captured by Haml COmment as Nested Content ContentBlock
+           cblock4c      # Captured by Haml Comment as Nested Content ContentBlock
 
            cblock4d
 HAML
@@ -1145,7 +1238,7 @@ end
 
 #================================================================
 describe HamlRender, "ImplNotes Code 9.2-01 -- Heads:HamlComment:" do
-  it "Lexeme BLM" do
+  it "Lexeme BOD" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -1176,9 +1269,13 @@ HTML
     end
   end
 end
-#Notice: "Pending WSE" because the Comment designated as 
-# "WSE Haml Comment..." would, in legacy Haml have to be 
-# indented one (document-wide fixed) IndentStep from 
+#Legacy Haml:
+# Haml::SyntaxError,
+# /Inconsistent indentation:.*spaces.*used for indentation, but.*rest.*doc.* using 4 spaces/
+#WSE Haml:
+# Notice: "Pending WSE" because the Comment designated as
+# "WSE Haml Comment..." would, in legacy Haml have to be
+# indented one (document-wide fixed) IndentStep from
 # the '-' in '-#' ... typically two spaces, and could not
 # be aligned as shown (or easily inserted above text an
 # author wants to make transparent).
@@ -1528,6 +1625,7 @@ HTML
     end
   end
 end
+#WSE Haml: Extended HereDoc syntax
 
 
 #================================================================
@@ -1855,6 +1953,7 @@ HAML
 HTML
   end
 end
+#Notice: Trailing whitespace
 #Notice: The OutputIndent for filter:preserve is 2 spaces, the
 # difference after the IndentStep is removed. If this were legacy Haml
 # the file-global IndentStep would be 2-spaces, leaving 2 spaces.
@@ -1870,7 +1969,13 @@ describe HamlRender, "ImplNotes Code 9.6-02 -- Heads:Preserve:" do
                  :preformatted => ['ver', 'vtag'],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts, :strvar => "toto\ntutu" )
+- html_tabstring('   ')
 .wspcpre
+  %spqr
+    %vtag Dirigo
+       Regnat Populus
+         Justitia Omnibus
+      Esse quam videri
   %snap
     %vtag= "Bar\nBaz"
   %crak
@@ -1882,55 +1987,64 @@ describe HamlRender, "ImplNotes Code 9.6-02 -- Heads:Preserve:" do
             (1..n).reduce(1, :*)  
           end  
     %vtag<<ASCII
-o           .'`/
-    '      /  (
-  O    .-'` ` `'-._      .')
-     _/ (o)        '.  .' /
-     )       )))     ><  <
-     `\  |_\      _.'  '. \
-       `-._  _ .-'       `.)
-   jgs     `\__\
+ o           .'`/
+     '      /  (
+   O    .-'` ` `'-._      .')
+      _/ (o)        '.  .' /
+      )       )))     ><  <
+      `\  |_\      _.'  '. \
+        `-._  _ .-'       `.)
+    jgs     `\__\
 ASCII
 HAML
       wspc.html.should == <<'HTML'
 <div class='wspcpre'>
-  <snap>
-    <vtag>
+   <spqr>
+      <vtag> Dirigo
+ Regnat Populus
+   Justitia Omnibus
+Esse quam videri
+      </vtag>
+   </spqr>
+   <snap>
+      <vtag>
 Bar
 Baz
-    </vtag>
-  </snap>
-  <crak>
-    <vtag>
+      </vtag>
+   </snap>
+   <crak>
+      <vtag>
 toto
 tutu
-    </vtag>
-  </crak>
-  <pahp>
-    <vtag>
-      def fact(n)  
-        (1..n).reduce(1, :*)  
-      end  
-    </vtag>
-  </pahp>
-  <vtag>
-o           .'`/
-    '      /  (
-  O    .-'` ` `'-._      .')
-     _/ (o)        '.  .' /
-     )       )))     ><  <
-     `\  |_\      _.'  '. \
-       `-._  _ .-'       `.)
-   jgs     `\__\
-  </vtag>
+      </vtag>
+   </crak>
+   <pahp>
+      <vtag>
+  def fact(n)  
+    (1..n).reduce(1, :*)  
+  end  
+      </vtag>
+   </pahp>
+   <vtag>
+ o           .'`/
+     '      /  (
+   O    .-'` ` `'-._      .')
+      _/ (o)        '.  .' /
+      )       )))     ><  <
+      `\  |_\      _.'  '. \
+        `-._  _ .-'       `.)
+    jgs     `\__\
+   </vtag>
 </div>
 HTML
     end
   end
 end
-#Notice: WSE filter:preformatted delivers a ContentBlock with the BLM of
-# its ContentBlock aligned with the indentation of the 
-# :preformatted Head.
+#Notice: WSE filter:preformatted delivers a ContentBlock with the
+# offside whitespace removed: whitespace at and to the right of the
+# BOD are preserved.
+# While, a simple %vtag will produce a ContentBlock aligned
+# to indentation 0.
 
 
 #================================================================
@@ -1951,11 +2065,24 @@ HAML
 <zot>
   Foo\n  <pre>Bar&#x000A;Baz</pre>
   Foo\n  %Bar\n  Baz
-  Foo\n  <xre>Bar\n    Baz</xre>
+  Foo\n  <xre>Bar\n  Baz</xre>
 </zot>
 HTML
   end
 end
+#Legacy Haml:
+#<zot>
+#  Foo\n  <pre>Bar&#x000A;Baz</pre>
+#  Foo\n  %Bar\n  Baz
+#  Foo\n  <xre>Bar\n  Baz</xre>
+#</zot>
+#In the non-preserving cases (2, 3),
+#   those spaces after \n ... should NOT be qty:4 -- 4 would be as if adjusting
+#   to align <xre>....</xre> and contents.
+#   But each \n segment is actually just text at the same left alignment,
+#   as the initial string character, so don't add EXTRA indent
+#Note: Because there are no leading or trailing whitespace, the result
+#   is the same in WSE Haml
 
 
 #================================================================
@@ -1977,13 +2104,13 @@ HAML
 <zot>
   Foo\n  &lt;pre&gt;Bar&#x000A;Baz&lt;/pre&gt;
   Foo\n  %Bar\n  Baz
-  Foo\n  &lt;xre&gt;Bar\n    Baz&lt;/xre&gt;
+  Foo\n  &lt;xre&gt;Bar\n  Baz&lt;/xre&gt;
 </zot>
 HTML
     end
   end
 end
-#Legacy Haml:
+#Legacy Haml (notice the unexpected transform of \n => &amp;#x000A;:
 #<zot>
 #  Foo\n  &lt;pre&gt;Bar&amp;#x000A;Baz&lt;/pre&gt;
 #  Foo\n  %Bar\n  Baz
@@ -2014,11 +2141,18 @@ HTML
     end
   end
 end
-#Legacy:
+#Legacy Haml: Notice the Tilde ~ operator didn't transform the \n
+#    (and the FAP operator, escaped the fresh encoding of \n)
 #<zot>
 #  Foo\n  &lt;pre&gt;Bar&amp;#x000A;Baz&lt;/pre&gt;
 #  Foo\n  &lt;pre&gt;Bar\n  Baz&lt;/pre&gt;
 #</zot>
+#Legacy Haml:
+# Besides the \n bug, there's an inconsistency in whitespace normalization:
+#   Why should tilde ~ insert that two-space OutputIndent to align the Baz?
+#   a. Actually, at all (given <pre> is option:preserve), and
+#   b. When FAP does not also do such alignment/insert (even with newline transform)?
+# WSE Haml assumes the two should give same result ... the FAP result.
 
 
 #================================================================
@@ -2026,7 +2160,7 @@ describe HamlRender, "ImplNotes Code 9.15-01 -- Heads:Whitespace Removal:" do
   it "Simple WSE Haml Mixed Content" do
     pending "WSE" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => false, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }
@@ -2074,7 +2208,7 @@ describe HamlRender, "ImplNotes Code 9.15-02 -- Heads:Whitespace Removal:" do
   it "Trim_in - WSE Haml" do
     pending "WSE" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => true, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }
@@ -2112,12 +2246,13 @@ HTML
   end
 end
 
+
 #================================================================
 describe HamlRender, "ImplNotes Code 9.15-03 -- Heads:Whitespace Removal:" do
   it "Trim_out Alignment - WSE Haml" do
     pending "BUG" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => true, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }

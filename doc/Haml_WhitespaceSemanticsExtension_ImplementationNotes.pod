@@ -1,8 +1,7 @@
-=pod
 
 =head1 Haml Whitespace Semantics Extension (WSE) Implementation Notes
 
-  Draft v0.2, 12 Sept 2010
+  Draft v0.5, 20 Oct 2010
 
 =head2 Authors
 
@@ -14,10 +13,18 @@
 
 A suite of specifications and tests accompany this text.
 
-The file B<00ImplementationNotes> contains the snippets found in this
-text, pretty much as shown ... well, that was the plan.
+In an earlier draft, file I<OOImplementationNotes>, contained all the code,
+in sequence (with the associated major head identified), as found in this
+document (WSE Implementation Notes). That RSpec file is deprecated, and
+although provided with v0.5, it is slated to be removed after draft v0.5.
 
-The files numbered from B<01> ro B<14> are by topic, contain specifications
+Instead, each code snippet is provided separately, as, for example,
+C<spec --color spec/00ImplNotes_Code09_5-10_spec.rb -f s>.
+
+These may be run in suites through use of the provided Rakefile, using
+the form C<rake spec:suite:code_9_5>, for example.
+
+The files numbered from B<01> to B<14> are by topic, contain specifications
 and demonstrations of WSE Haml extensions, and a few of the bugs in
 legacy Haml. We I<highly> recommend a detailed review of those files,
 as not all aspects of the proposed WSE extensions are documented in 
@@ -94,7 +101,7 @@ maintainer of the Ruby implementation of Haml) filed Issue #28, entitled
 I<Allow variable indentation under certain circumstances>. 
 Visit: GitHub nex3 Haml Issue 28 at L<http://github.com/nex3/haml/issues#issue/28>.
 
-Nex3 says:
+Nex3 says (with our RSpec code references inserted):
 
       Label: Hard
 
@@ -135,8 +142,7 @@ Nex3 continues:
 
       should raise an error on the "down two spaces" line.
 
-As preview, here is one WSE Haml interpretation. For alternatives,
-see the referenced code spec, and other rspec suites mentioned there:
+As preview, here is one WSE Haml interpretation:
 
       Code 4-04
 
@@ -149,12 +155,17 @@ see the referenced code spec, and other rspec suites mentioned there:
         down two spaces
       </foo>
 
+For alternatives, see the referenced code spec, and other rspec suites
+mentioned there. For example, had tag 'foo' been a member of
+C<option:preformatted>, the two line's relative indentation would have
+been replayed in HtmlOutput.
+
 The extensions to whitespace semantics proposed in this document attempt
 to spell out the implementation of such a change, and its ramifications.
 
-Well, a bit more than that ... because on initially reading Issue 28, 
-it seemed it is probably unnecessary and unhelpful to raise warnings, and 
-it is probably possible to disambiguate the case above which nex3 labels 
+Well, a bit more than that ... because on initially reading Issue 28,
+it seemed it is probably unnecessary and unhelpful to raise warnings, and
+it is probably possible to disambiguate the case above which nex3 labels
 as ambiguous, and many others as well.
 
 Yes, that's all it took, and after a bit of study and testing, here you go.
@@ -179,17 +190,17 @@ As a language, Haml grants significant semantic power to whitespace.
 Yet, the semantics and implementation remain somewhat rough, as is
 revealed with a brief experience with Haml, or a quick run of just
 a bit more complicated test cases, or a perusal of the issues filed
-on GitHub including ideas logged by the current maintainer 
+on GitHub including ideas logged by the current maintainer
 I<nex3, Nathan Weizenbaum>.
 
-We treat Haml as a domain-specific language for describing HTML, and XML 
-(including XHTML) files. (We say "Html" except where differences are 
-significant and non-obvious; in this we depart from the Haml specification, 
-for reasons that we hope will become obvious.) 
+We treat Haml as a domain-specific language for describing HTML, and XML
+(including XHTML) files. (We say "Html" except where differences are
+significant and non-obvious; in this we depart from the Haml specification,
+for reasons that we hope will become obvious.)
 
-Coarsely, Haml offers: a tag macro language, a templating and variable 
-substitution language, and access to underlying programming language 
-facilities. 
+Coarsely, Haml offers: a tag macro language, a templating and variable
+substitution language, and access to underlying programming language
+facilities.
 
 In form, Haml is marked most by two characteristics:
 
@@ -201,7 +212,7 @@ By representation of HTML elements through use of start macros, and
 
 =item 2.
 
-By use of indentation to demarcate the extent of model content.
+By use of indentation, which demarks the extent of model content.
 
 =back
 
@@ -267,10 +278,10 @@ In Haml, whitespace is 'active.' Parsing Haml can be viewed, largely, as the
 lexical decoding of whitespace, and assigning semantics to whitespace-related
 productions and proximate text.
 
-The whitespace of a HamlSource, or (Haml) template, determines both 
-HamlSource processing, and the appearance of the HtmlOutput. To that is 
-added the semantics of the non-whitespace tokens, which include text to be 
-transformed, text to be copied through, evaluation forms, and a few 
+The whitespace of a HamlSource, or (Haml) template, determines both
+HamlSource processing, and the appearance of the HtmlOutput. To that is
+added the semantics of the non-whitespace tokens, which include text to be
+transformed, text to be copied through, evaluation forms, and a few
 processing instructions. For the most part, this document pushes transforms
 and processing to the background: the focus is whitespace.
 
@@ -278,11 +289,11 @@ Notice that this document concerns Haml itself, not the related
 mechanisms. We will be working with the HamlSource, and the HtmlOutput.
 
 In the Haml literature, sometimes the HamlSource is referred to as a
-template, or a partial; sometimes it is the output that is called a 
-template. It is true that in actual applications the input may be 
-substantially a document of interpolation and computation, or that the 
-output may be substantially a document prepared for further interpolation 
-and computation. Regardless, here we do not work with templates of any 
+template, or a partial; sometimes it is the output that is called a
+template. It is true that in actual applications the input may be
+substantially a document of interpolation and computation, or that the
+output may be substantially a document prepared for further interpolation
+and computation. Regardless, here we do not work with templates of any
 kind: a HamlSource is prepared by an author, processed by the Haml processor,
 producing an HtmlOutput.
 
@@ -300,7 +311,7 @@ For this document and implementation, here's the setup:
                    HtmlOutput
 
 The Haml syntax is (mostly) inert wrt template-like processing: e.g.,
-erb <%...%> means nothing in HamlSource syntax. So, although the 
+erb <%...%> means nothing in HamlSource syntax. So, although the
 following are possible processing models, these extensions do not
 look to their requirements:
 
@@ -316,13 +327,13 @@ discussed here do not consider templates or intermediate forms and
 processing. If you are concerned with these other areas, you might be able
 to expand on these extensions or their support -- that would be great.
 
-A HamlSource begins in the first column of the first line (denoted
-indent 0 of line 0). A Haml document tree is built up from there,
-through a series of Elements, in succession. Mostly, the tree is built
-up in depth-first, 'preorder', fashion, where each parent directly
-contains and completely describes all of its children, although some
-variance from this is provided by variable assignment and substitution,
-evaluation forms, and processing instructions.  
+A HamlSource begins in the first column of the first line (denoted indent 0
+of line 0). A Haml document tree is built up from there, through a series of
+Elements, in succession. Mostly, the tree is built up in depth-first,
+'preorder', fashion, where each parent directly contains and in similar
+fashion describes all of its children, although some variance from this is
+provided by variable assignment and substitution, evaluation forms,
+and processing instructions.
 
 We propose three frames for whitespace semantics:
 
@@ -370,45 +381,65 @@ A mixture of Inline Content (on the Head) and Nested Content
 
 =item Plaintext Nesting
 
-Nesting is now permitted in Plaintext for most operators
+Nesting is now permitted in Plaintext HamlSource, for most operators
 
-=item Preformatted
+=item OIR:strict for Tag Indentation
 
-An extension of C<option:preserve>, with Mixed Content, without newline 
-transforms. Includes a partner C<filter:preformatted>. In WSE Haml, 
-by default, C<%pre> and C<%textarea> shift from C<option:preserve> 
-to C<option:preformatted>. Authors will add to C<option:preformatted> any
-tags for which they assign CSS C<white-space:pre>-like mechanics.
+Set the Orderly Indentation Rule similar to Legacy Haml, with more
+flexibility for IndentStep Indents and Undents, removing many aspects
+of the tedious indent tidying during content and layout maintenance.
+
+=item OIR:loose for Tag Indentation
+
+The default in WSE, simplifying the blocking rules immensely, without
+ambiguity. Entirely removes tidying tedium where, after maintenance of
+content or layout, content remains a descendant of the preceding elements.
+Copy-paste maintenance is also simplified.
 
 =item Vertical Whitespace
 
-Vertical whitespace will now separate Html hunks (changed handling of whitelines)
+Vertical whitespace will now separate Html chunks (changed handling of
+whitelines)
 
 =item Multiline Processing
 
 Improvements to the syntax for adjacent Multiline blocks, to Haml Comment 
 processing, and introduction of Whiteline termination.
 
-=item HereDoc
-
-Introduction of HereDoc << to supply a ContentBlock
-
 =item Haml Comment Markup
 
 Improved rules for Haml markup comments
 
-=item OIR:strict
+=item Preformatted
 
-Set the Orderly Indentation Rule similar to legacy, with more flexibility 
-for IndentStep Indents and Undents, removing many aspects of the tedious 
-indent tidying during content and layout maintenance.
+An extension of C<option:preserve>-like semantics, with Mixed Content,
+without newline transforms, with HtmlOutput having symmetric start tag
+and end tags, and limiting the use in HtmlOutput of an Inline fragment
+except where reflecting author's use in HamlSource.
 
-=item OIR:loose
+Three mechanisms provide this facility, each with somewhat different
+features: C<option:preformatted> membership for tags (denoted here as
+'vtag', for verbatim); C<filter:preformatted>; and the HereDoc
+(described separately).
 
-The default in WSE, simplifying the blocking rules immensely, without 
-ambiguity. Entirely removes tidying tedium where, after maintenance of 
-content or layout, content remains a descendant of the preceding elements. 
-Copy-paste maintenance is also simplified.
+In WSE Haml, by default, C<%pre> and C<%textarea> shift from membership
+in C<option:preserve> to C<option:preformatted>. Authors will likely
+add to C<option:preformatted> any tags for which they assign CSS
+C<white-space:pre>-like mechanics.
+
+=item HereDoc
+
+Introduction of HereDoc << to supply a ContentBlock with leading
+whitespace and newlines preserved, which is then processed according to
+the Head's semantics. A part of the facility for preformatted semantics.
+
+=item html_tabs
+
+A new helper, yielding the count of 'tabs' in the current OutputIndent.
+
+=item html_tabstring
+
+A new helper, get/set the string used for a single 'tab' of the OutputIndent.
 
 =item Escaped HtmlOutput
 
@@ -420,43 +451,8 @@ C<&amp;> never becomes C<&amp;amp;>.
 Further, the transformation to character entity references is conditioned 
 on doctype and Haml options. 
 
-Regarding the motivations for this change. One motivation concerns the 
-semantics of document processing: In Html, an escaped text is one which 
-each symbol intended as [plain] text is of an encoding which assures it 
-will transit document processing and be rendered as [plain] text. More 
-particularly, that all symbols having significance to Html document syntax 
-processing be represented (here, encoded) in such a way as to I<escape> 
-such syntax processing. Thus, B<in Html>, considering two separate 
-encodings of the ampersand, I<&> is a symbol susceptible to Html syntax 
-processing, which would require a different encoding when a part of 
-[plain] text; I<&amp;> is not, and does not. 
-
-As a more Haml-focused motivation, WSE Haml in general manifests a change
-of focus from a mostly processing- and programmer-focused view, to that
-of an author-focused HamlSource and HtmlOutput view. Thus WSE Haml 
-changes 'escaping' transforms from that of 'sanitizing' or 'find-replace', 
-programmer-focused mechanics, to that of the HtmlOutput, author-focused 
-results.
-
-The escaping changes apply across I<all> Haml operators, whether requested 
-at the operator level, or through C<option:escape_html>, including an 
-operator such as the Tilde or Ampersand expressions 
-(C<~ expr> and C<& expr>) and helper functions such as 
-C<helper:capture_html>, operating individually or in composition.
-
-Note: Sanitizing user input is a separate matter: an input processor 
-providing HamlSource B<should> sanitize I<input> of the form C<&amp;> 
-to C<&amp;amp;>, which WSE Haml, while processing that HamlSource and 
-generating HtmlOutput, will not further transform.
-
-
-=item html_tabs
-
-A new helper, yielding the count of 'tabs' in the current OutputIndent.
-
-=item html_tabstring
-
-A new helper, get/set the string used for a single 'tab' of the OutputIndent.
+For more about the motivations about this change, see Escaped HtmlOutput
+in the Glossary.
 
 =back
 
@@ -484,7 +480,7 @@ indentation:
           %p cblock3
         %p cblock4
 
-In both cases, Haml sees what you mean, and creates spiffy HtmlOutput.
+In both cases, WSE Haml sees what you mean, and creates spiffy HtmlOutput.
 
       <div id='id1'>
         <p>cblock2</p>
@@ -514,7 +510,7 @@ to the rendering of an Inline Content ContentBlock having newlines, such as
 can occur with interpolation, C<= expr>, or similar: like the above, the
 initial whitespace, and the initial text is rendered immediately after any
 Html start tag. For some Haml users, this will be WSE Haml's most obvious
-departure from the Legacy Haml rendering.
+departure of existing facilities from the Legacy Haml rendering.
 
       Code 7-03
 
@@ -534,7 +530,7 @@ departure from the Legacy Haml rendering.
 
       %p eggs #{strvar} spam
       <p>eggs foo                  # Same mechanisms applied to previous case
-         bar spam
+        bar spam
       </p>
 
 These are taken from the Code 08-8 suite of sample code, below, which
@@ -544,15 +540,15 @@ contains further examples and discussion.
 =head2 Processing Model -- Haml Whitespace Semantics Extensions (WSE)
 
 This section walks through the processing model for whitespace, starting
-mostly from guiding principles and the basic elements, and eventually 
+mostly from guiding principles and the basic elements, and eventually
 moving to specific cases (to which you may be wise to directly skip).
 
-Terms are introduced and explained in place. Please, however, see the 
+Terms are introduced and explained in place. Please, however, see the
 B<Glossary>: you should probably scan it first.
 
-These extensions attempt to be neutral wrt implementation language. 
-Be on your guard, however: the Ruby and Perl implementations 
-evaluate certain Haml forms at different times and in different dynamic 
+These extensions attempt to be neutral wrt implementation language.
+Be on your guard, however: the Ruby and Perl implementations
+evaluate certain Haml forms at different times and in different dynamic
 contexts. The processing of the results of interpolation is one such area.
 It's possible some of that has snuck in here.
 
@@ -561,34 +557,34 @@ It's possible some of that has snuck in here.
 
 From the Haml Reference:
 
-      A substantial portion of any Html document is its content, 
+      A substantial portion of any Html document is its content,
       which is plain old text. ...
 
 An important aspect of the WSE processing model wrt legacy Haml concerns
-the model of lexical and syntactical analysis. With respect to lexing 
-and syntactics, the legacy implementation (and language design) treats 
-the challenge as, essentially, that of an executable language. 
-Like Python, for example; but Haml is not Python. 
+the model of lexical and syntactical analysis. With respect to lexing
+and syntactics, the legacy implementation (and language design) treats
+the challenge as, essentially, that of an executable language.
+Like Python, for example; but Haml is not Python.
 
-That approach is a contributor to a confusion captured in the dispiriting 
+That approach is a contributor to a confusion captured in the dispiriting
 meme: I<Haml is for layout, not content>.
 
-WSE recognizes the difference in these models, aligning lexing and syntax 
-more with Haml's actual lexical and syntactical nature: as a macro language. 
+WSE recognizes the difference in these models, aligning lexing and syntax
+more with Haml's actual lexical and syntactical nature: as a macro language.
 
-An executable language consists of, mostly, active constructs, 
-statements and expressions, and such; all other content is narrowly 
+An executable language consists of, mostly, active constructs,
+statements and expressions, and such; all other content is narrowly
 constrained or contained. In a macro language the situation is reversed:
 the focus is on content, of which macro languages are much more tolerant.
-Basically, when a processor of macro languages is not operating directly 
-on its own lexemes, it accepts anything. 
+Basically, when a processor of macro languages is not operating directly
+on its own lexemes, it accepts anything.
 
-Consider, for the starkest of examples, a random (unclosed) C<#{...> or 
-even C<=1 + {>. Under the legacy implementation, the lexer fails and, 
-consistent with an executable language approach, terminates the entire 
-rendering (in a full Java-esq cascade of errors). Under WSE, the lexer 
-(conceptually) runs to the end of the plausible branch, backtracks, 
-and fires that construct as plaintext. 
+Consider, for the starkest of examples, a random (unclosed) C<#{...> or
+even C<=1 + {>. Under the legacy implementation, the lexer fails and,
+consistent with an executable language approach, terminates the entire
+rendering (in a full Java-esq cascade of errors). Under WSE, the lexer
+(conceptually) runs to the end of the plausible branch, backtracks,
+and fires that construct as plaintext.
 
 Legacy Haml generates an exception:
 
@@ -799,7 +795,7 @@ sole exceptions are:
 =item Special character escaping
 
     Escaping of the 'fifth' special character, apostrophe, is, under WSE,
-    limited to documents using an effective XML-related doctype or escaping 
+    limited to documents using an effective XML-related doctype or escaping
     option. Additionally, the (WSE-corrected) filter:escaped (alias:
     filter:escapehtml) will perform the same processing wrt those special
     characters.
@@ -809,16 +805,16 @@ sole exceptions are:
 
 =head3 Indentation
 
-Indentation is a measure: the column index of the first non-whitespace 
+Indentation is a measure: the column index of the first non-whitespace
 character following a prior newline.
 
 After processing instructions, the first non-whitespace character of
 a HamlSource must have an Indentation of 0.
 
-Note: This is a discussion concerning HamlSource. Regardless of these 
-concerns, when HtmlOutput is generated the size of each OutputIndent 
-is a fixed size: by convention 2 spaces, and get/set-able by helper 
-C<html_tabstring>, a WSE extension. The number of OutputIndents to be 
+Note: This is a discussion concerning HamlSource. Regardless of these
+concerns, when HtmlOutput is generated the size of each OutputIndent
+is a fixed size: by convention 2 spaces, and get/set-able by helper
+C<html_tabstring>, a WSE extension. The number of OutputIndents to be
 used when next needed is get-able by (WSE extension) helper C<html_tabs>
 and modifiable by helpers C<tab_up>, C<tab_down>, C<with_tabs>.
 
@@ -834,31 +830,31 @@ This section will touch on several fundamental concepts. They include:
 
 =item * The Orderly Indentation Rule
 
-=item * The BlockLeftMargin
+=item * The Block Onside Demarcation (BOD)
 
 =back
 
 Indentation in HamlSource is of primary significance in determining
-the scope of a ContentBlock. It is not the only consideration. 
+the scope of a ContentBlock. It is not the only consideration.
 To a smaller extent, e.g., Whitelines are also significant.
 
-In consequence, Haml is a physical ISWIM language observing the general rule 
-that a construct be defined in its "southeast quadrant", which gives rise to 
+In consequence, Haml is a physical ISWIM language observing the general rule
+that a construct be defined in its "southeast quadrant", which gives rise to
 the Offside Rule [4]: Indentation is used to indicate program structure.
 
-Landin defined ISWIM as a four-level concept. With respect to getting 
-concepts clear, Python is also a physical (level-1) ISWIM language, 
-but is a realization of a narrowed, parochial, interpretation of the 
-general abstract (level-3) ISWIM concepts. That's for good effect. 
-Legacy Haml, however, hardened Python's interpretation by insisting 
-that the indent be everywhere constant (say, 2 spaces). This is 
+Landin defined ISWIM as a four-level concept. With respect to getting
+concepts clear, Python is also a physical (level-1) ISWIM language,
+but is a realization of a narrowed, parochial, interpretation of the
+general abstract (level-3) ISWIM concepts. That's for good effect.
+Legacy Haml, however, hardened Python's interpretation by insisting
+that the indent be everywhere constant (say, 2 spaces). This is
 unnecessary for Haml.
 
 Under default WSE Haml the rule is, just: Stay to the Right.
 
 This abstract example shows a constant 2-space indent (the B<IndentStep>)
 throughout. It is compatible with legacy Haml implementations.
- 
+
       Code 8.4-01
 
       HEAD1
@@ -901,7 +897,7 @@ Most constructs do observe the OIR. The 'strict' mode of OIR will enforce
 a slightly relaxed form of the legacy indentation rules. 
 
 Under I<OIR:strict>, the IndentStep must be constant I<within an Element's 
-immediate ContentBlock>. Under I<OIR:strict>, the following is allowed. 
+immediate ContentBlock>. I<OIR:strict> allows the structure shown here.
 Notice the changing size of the IndentStep (some might say it allows
 improved cosmetics in HamlSource):
 
@@ -938,7 +934,7 @@ IndentStep, C<%div#a> and C<%p cblock4> are at the same level: first
 cousins.
 
 The default for WSE Haml is, however, I<OIR:loose>, to which the following,
-perhaps after further maintenance, would conform (Yes, not a typo: the 
+perhaps after further maintenance, would conform. (Yes, not a typo: the
 Indentation of C<%p cblock4> is only one more than that of C<%div#b>.):
 
       Code 8.4-05
@@ -968,11 +964,11 @@ substitution of the two lines: the two descendants are siblings.)
 
 The example above gives occasion to clarify a few related concepts. 
 
-To put it into operation, "offside" requires a point of reference. For WSE
-this point of reference is called the BlockLeftMargin (BLM). The BLM falls
-at the minimum Indentation which contains the complete definition of the 
-related Element. At minimum, the Indentation for an Element's BLM
-equals the Head's Indentation + 1.
+To put it into operation, "offside" requires a condition or point of
+reference. For WSE this point of reference is called the
+Block Onside Demarcation (BOD): the Element's complete definition must
+fall at that Indentation or greater. The minimum Indentation for an
+Element's BOD is its Head's Indentation plus 1.
 
       ..%div#id1
       .....%div#a cblock1
@@ -981,7 +977,8 @@ equals the Head's Indentation + 1.
       ......%p cblock4
 
             ^
-            | BlockLeftMargin for %div#b (OIR:loose)
+            | BlockOnsideDemarcation for %div#b (OIR:loose)
+              Thus %p cblock4 is "onside"
 
 Under I<OIR:strict>, the IndentSteps under an immediate Element will be
 constant: the Textlines will demarcate a single clear column. 
@@ -996,14 +993,14 @@ the immediate Element.
       ......%p cblock4
 
       ..            IndentStep=2  for %div#id1
-        ...         IndentStep=3  for %div#a and %div#b 
+        ...         IndentStep=3  for %div#a and %div#b
+           .......  IndentStep=7  for %p cblock3
         ....        IndentStep=4  for %p cblock4
-        ..........  IndentStep=10 for %p cblock4 
 
 Offside is part of a state change too. A Textline is considered Onside
-when it's Indentation is equal or greater than an Element's BLM; otherwise
+when it's Indentation is equal or greater than an Element's BOD; otherwise
 it is Offside. A Textline is said to have 'moved' Offside when it appears
-as the first Textline to have Indentation less than the prevailing BLM
+as the first Textline to have Indentation less than the prevailing BOD
 (with 'moved' Onside as a rare description of the inverse case).
 
 Still in I<OIR:loose> (the default):
@@ -1020,19 +1017,19 @@ Still in I<OIR:loose> (the default):
       .....%div#id2
 
             ^
-            | BlockLeftMargin for %div#b (OIR:loose) (Indentation=6)
+            | BlockOnsideDemarcation for %div#b (OIR:loose) (Indentation=6)
            ^
            |  Offside move, for Textline %div#id2 (Indentation=5)
          ^
-         |    BlockLeftMargin for %div#id1 (Indentation=3)
+         |    BlockOnsideDemarcation for %div#id1 (Indentation=3)
 
 Notice in the above that the smallest Undent for Textline C<%div#id2> shifts 
-it Offside into the C<%div#id1> ContentBlock, as a sibling. Any move offside
-Undent between Indentation 5 and 3 would have had the same result.
+it Offside into the C<%div#id1> ContentBlock, as a sibling. Any move offside,
+Undent, between Indentation 5 and 3 would have had the same result.
 
 In a HamlSource describing an ordinary HTML document, after the encoding PI, 
 and doctype macros, it would be most common for most Textlines to never go 
-Offside past the second BlockLeftMargin (here, demarcated by CONTENT): 
+Offside past the second BlockOnsideDemarcation (here, demarcated by CONTENT):
 
       Code 8.4-07
 
@@ -1042,10 +1039,10 @@ Offside past the second BlockLeftMargin (here, demarcated by CONTENT):
         %body
           CONTENT
 
-There is, of course, the potential for a variety of HamlSource whitespace
-forms which result in different treatments, such as those for Multiline or 
-HereDocs. Also, there is a variety of HtmlOutput whitespace forms, 
-including a difference under C<option:preserve> or C<option:preformatted>.
+There is the potential for a variety of HamlSource whitespace forms which
+result in different treatments, such as those for Multiline or HereDocs.
+Also, there is a variety of HtmlOutput whitespace forms, including a
+difference under C<option:preserve> or C<option:preformatted>.
 
 In summary of the basic indentation rules:
 
@@ -1064,7 +1061,7 @@ Undents must unfold (pop) some number of prior IndentSteps.
 
 IndentSteps may vary within an immediate Element, provided
 they stay Onside: with Indentation equal or greater-than that
-of the prevailing BLM.
+of the prevailing BOD.
 
 =back
 
@@ -1072,66 +1069,69 @@ Exceptions to the above arise with certain specific structures. Some
 of the annotations are rather cryptic or are introduced here for the
 first time. Refer to descriptions later in this document.
 
-             Observe  Require
-             Offside  OIR      Notes
-  ---------  -------  -------  ------------------------------------------------------------------
+              Observe   Require
+              Offside   OIR      Notes
+  ---------   -------   -------  ------------------------------------------------------------------
 
-  !!!           Yes    n/a     Inline-only
-  -code         Yes    n/a     Inline-only
-  =expr et al   Yes    n/a     Inline-only(embedded \n*); Interpolation; no %tags;
-  ~expr         Yes    n/a     Inline-only(embedded \n*); Interp.; no %tags; preserve transform
-  Plaintext     Yes    n/a     Just line-by-line; Interpolation
+  !!!            Yes     n/a     Inline-only
+  -code          Yes     n/a     Inline-only
+  =expr et al    Yes     n/a     Inline-only(embedded \n*); Interpolation; no %tags; Init Wspc
+  ~expr          Yes     n/a     Inline-only(embedded \n*); Interp.; no %tags; preserve transform
+  Plaintext      Yes     Free    Just line-by-line, variable indentation; Interpolation
 
-  Multiline     No     No      Infix lexeme; %tags & Interpolation; Consolidate Whitespace
-  HereDoc       No     No      Terminal lexeme; Interpolation; Verbatim Whitespace
+  Multiline      No      No      Infix lexeme; %tags & Interpolation; Consolidate Whitespace
+  HereDoc        No      No      Terminal lexeme; Interpolation; Verbatim Whitespace
 
-  Haml Comment  Yes    No      Meta content; In addition to Offside, Whiteline terminates too
-  Html Comment  Yes    No      Haml processing (%tags, interpolation, etc)
+  Haml Comment   Yes     No      Meta content; In addition to Offside, Whiteline terminates too
+  Html Comment   Yes     No      Haml processing (%tags, interpolation, etc)
 
-  preformatted  Yes    Free    %tag listed in option; Haml processing; Verbatim
-  preserve      Yes    Legacy  %tag listed in option; Haml processing; Transform newlines
+  preformatted   Yes     Free    %tag member option; Haml procsng; presv indent.; Symmetric tags
+  preserve       Inline  Legacy  %tag member option; Haml procsng; presv indent.; Transform newlines
 
-  filters       Yes    No      For the Filter Head; Each filter then has its own content rules
+  filters        Yes     No      For the Filter Head; Each filter then has its own content rules
 
-  :preserve     Preset No      Within the Filter ContentBlock, the rules for this filter set the 
-                               BLM at parent's IndentStep; within that OIR is not required. 
-                               Preserve transform; Interpolation; no %tags
+  :preserve      BOD at  No      As in Legacy: BOD for Filter ContentBlock is set at the
+                 Indent          Indentation of the filter's Head plus its IndentStep.
+                 Step            (Legacy idiom: BOD is indented 2 from Head indentation.)
+                                 HtmlOutput is equivalent to rendering at Indentation 0
+                                 Preserve transform; Interpolation; no %tags
 
-  :preformatted No     No      The BLM is set to the minimum indent, at the :preformatted 
-                               Indentation plus 1. 
-                               No newline transform; Interpolation; no %tags
+  :preformatted  BOD at  No      Similar to filter:preserve, except: no newline transform.
+                 Indent          Indentation of the filter's Head plus its IndentStep.
+                 Step            On HtmlOutput, the parent's tags are symmetrically placed, and
+                                 the content block with leading whitespace is rigid-shifted left
+                                 to Indentation 0
 
-  Haml %tag     Yes    Yes     Haml processing; OIR:loose (default) or OIR:strict
+  Haml %tag      Yes     Yes     Haml processing; OIR:loose (default) or OIR:strict;
 
   * embedded \n: Operator permits expression having embedded newline (which it interprets)
 
   ----
-  Observe Offside: Is the extent of the Content Model of the specified 
-      ContentBlock sensitive to the BLM and Offside Undents? An Inline-only 
-      Content Model is by definition Offside sensitive (plaintext TextLine, 
-      etc.); A Content Model whose extent is insensitive to the BLM and 
-      Offside Undents will require something other than these effects to 
-      terminate the ContentBlock (e.g., Multiline: the absence of the infix 
+  Observe Offside: Is the extent of the Content Model of the specified
+      ContentBlock sensitive to the BOD and Offside Undents? An Inline-only
+      Content Model is by definition Offside sensitive (plaintext TextLine,
+      etc.); A Content Model whose extent is insensitive to the BOD and
+      Offside Undents will require something other than these effects to
+      terminate the ContentBlock (e.g., Multiline: the absence of the infix
       lexeme; HereDoc: the presence of the specified terminal string).
-  Require OIR: Does the Content Model of the specified ContentBlock 
+  Require OIR: Does the Content Model of the specified ContentBlock
       enforce the OIR (strict, or loose) for it's content? This impacts
       nested tags, as you'd expect. But it also impacts author expectations
-      related to plaintext. For example, legacy Haml disallows indentation 
+      related to plaintext. For example, legacy Haml disallows indentation
       in plaintext. Mysterious-enough for an ordinary tag, but it comes as
-      a surprise to an author attempting to use an option:preserve tag with 
-      nested content (sure, Haml jocks have learned that this is improper), 
+      a surprise to an author attempting to use an option:preserve tag with
+      nested content (sure, Haml jocks have learned that this is improper),
       who is told: [just] use filter:preserve [after indenting every line of
-      the entire text another IndentStep]. Under WSE Haml, tags follow 
-      OIR:loose by default, and tags listed in option:preformatted allow 
-      indentation in plaintext.
+      the entire text another IndentStep]. Under WSE Haml, tags follow
+      OIR:loose by default.
 
 For more examples, see the RSpec test cases.
 
-* [4] P. J. Landin ACM v9 n3, Mar 1966, p157. "Offside" is the spelling on 
-      p160, where it is actually defined (p164 spells it "off-side"). 
-      Merriam-Webster's Collegiate 10th lists it as "offside". Good enough for 
+* [4] P. J. Landin ACM v9 n3, Mar 1966, p157. "Offside" is the spelling on
+      p160, where it is actually defined (p164 spells it "off-side").
+      Merriam-Webster's Collegiate 10th lists it as "offside". Good enough for
       me ... I invite you to (try to) correct the various Wikipedia entries.
-      Landin proposed ISWIM I<If you See What I Mean> as the name for the 
+      Landin proposed ISWIM I<If you See What I Mean> as the name for the
       family of languages realizing the described system.
 
 
@@ -1155,8 +1155,8 @@ called I<Mixed Content>, q.v.)
 
 Unless otherwise noted, an Element supporting I<Nested Content> permits
 additional, nested, Elements; otherwise it is said to support (only)
-I<Nested Text Content> (which may enforce a single BlockLeftMargin, or
-alternatively permit additional indentation).
+I<Nested Text Content> (which may enforce a single BlockOnsideDemarcation,
+or alternatively permit additional indentation).
 
 =item Mixed Content
 
@@ -1169,34 +1169,35 @@ WSE Haml.
 
 =item HereDoc Content
 
-Where the I<HereDoc Content> Content Model is permitted, that Element's 
-ContentBlock starts at Indentation 0 of the Line following the Head line 
-that contains the Initial HereDoc Delimiter of alphanumeric-plus-underscore 
-characters (/<<-?[\w_]+/). The Element's ContentBlock ends with the 
-newline of the last Line before the Terminating HereDoc Delimiter. If the 
-Initial HereDoc Delimiter begins with the form '<<-', the Terminating 
+Where the I<HereDoc Content> Content Model is permitted, that Element's
+ContentBlock starts at Indentation 0 of the Line following the Head line
+that contains the Initial HereDoc Delimiter of alphanumeric-plus-underscore
+characters (/<<-?[\w_]+/). The Element's ContentBlock ends with the
+newline of the last Line before the Terminating HereDoc Delimiter. If the
+Initial HereDoc Delimiter begins with the form '<<-', the Terminating
 HereDoc Delimiter may be indented.
 
-Within HereDoc Content, the Orderly Indentation Rule and BlockLeftMargin
-effects (including Offside) are suspended. Interpolation is provided,
-but ordinary Haml tags and other processing is not provided. 
+Within HereDoc Content, the Orderly Indentation Rule and Offside effects
+are suspended. Interpolation is provided, but ordinary Haml tags and other
+processing is not provided.
 
-(For those familiar with Ruby HereDoc, the WSE Haml implementation is 
-similar to the interpolating HereDoc (with double-quotes, or bare) ... 
+(For those familiar with Ruby HereDoc, the WSE Haml implementation is
+similar to the interpolating HereDoc (with double-quotes, or bare) ...
 but quotes marks are not supported in the WSE Haml HereDoc syntax.)
 
-Where an Element supports HereDocs, the resulting ContentBlock (after 
-interpretation, including interpolation) is valid for any type of 
-Content Model (Inline, Nested, or Mixed). If, for example, the Element's 
-Head is listed in C<option:preserve>, the standard preserve transformations 
-will be applied to assure 'preserve'-compliant HtmlOutput.
+Where an Element supports HereDocs, the resulting ContentBlock (after
+interpretation, including interpolation) is valid for any type of
+Content Model (Inline, Nested, or Mixed). If, for example, the Element's
+Head is listed in C<option:preserve>, the ContentBlock is handled as-if
+Inline, and the standard preserve transformations will be applied to
+assure 'preserve'-compliant HtmlOutput.
 
-Any Textlines following the Line containing the Terminating HereDoc 
+Any Textlines following the Line containing the Terminating HereDoc
 Delimiter is evaluated as part of the parent or ancestors of the Element
-to which the HereDoc provides the ContentBlock (i.e., the Textline is 
+to which the HereDoc provides the ContentBlock (i.e., the Textline is
 the Element's sibling or a cousin, depending on OIR.)
 
-TODO: The <<EOD provides the entire ContentBlock. Perhaps the Initial 
+TODO: The <<EOD provides the entire ContentBlock. Perhaps the Initial
 HereDoc Delimiter could be followed by something? Whatever that could be,
 it would not be part of the ContentBlock--it would seem appropriate to
 apply to the Head or the Element overall. Perhaps it could be text, such
@@ -1211,8 +1212,8 @@ These content models, and variations, are described further below.
 
 =head3 Whitespace (Horizontal whitespace)
 
-Indentation is the most significant whitespace, it pertains to HamlSource 
-syntax and semantics. But there are other whitespace considerations, 
+Indentation is the most significant whitespace, it pertains to HamlSource
+syntax and semantics. But there are other whitespace considerations,
 including some pertaining to HtmlOutput, as follows.
 
 WSE Haml approaches Whitespace using three transforms:
@@ -1235,22 +1236,22 @@ I<Interior>, and I<Trailing>.
 =item Trailing Whitespace
 
 Trailing whitespace has no semantic significance to Haml. Further,
-in all but a few cases it is removed from HtmlOutput, or in 
+in all but a few cases it is removed from HtmlOutput, or in
 the few exceptions, it is consolidated.
 
-Trailing whitespace is replayed under C<option:preserve> and 
-C<option:preformatted>, within filter:preserve, and in HereDoc; 
-it is consolidated in Multiline text.
+Trailing whitespace is replayed under C<option:preserve> and
+C<option:preformatted>, within filter:preserve and filter:preformatted,
+and in HereDoc; it is consolidated in Multiline text.
 
-Notice that under WSE, "preserve" is changed to consolidate trailing 
-newlines in an expression (that is, the "="-equiv constructs), 
-then transform the single remaining newline. 
+Notice that under WSE, "preserve" is changed to consolidate trailing
+newlines in an expression (that is, the "="-equiv constructs),
+then transform the single remaining newline.
 
 In Multiline Content Blocks, Trailing Whitespace is consolidated.
 
 =item Interior Whitespace
 
-The interior linear whitespace of ordinary HamlSource Textlines is 
+The interior linear whitespace of ordinary HamlSource Textlines is
 replayed (n->n).
 
 TODO: Possible option wspcinterior:consolidate ?
@@ -1260,13 +1261,26 @@ TODO: Possible option wspcinterior:consolidate ?
 This category refers to whitespace at the beginning of each Textline
 in Nested Content, distinguishing it from Initial Whitespace (see below).
 
-Leading Whitespace refers to the Whitespace in the HamlSource remaining 
-after adjusting for any IndentSteps: those of the ancestor Elements, and 
-of the Head--it is the whitespace between the ContentBlock's 
-BlockLeftMargin and the beginning of the Textline.
+Leading Whitespace refers to the Whitespace preceding the first text
+of a Textline remaining after subtracting any IndentSteps: the
+IndentSteps of the ancestor Elements, and the IndentStep of the Head:
+it is the whitespace between the Head's Indentation and the first text
+of the Textline.
 
 Leading Whitespace is replayed. Exceptions to this include the Multiline
-syntax.
+syntax, and option:preformatted tags (where the ContentBlock is rigidly
+shifted to Indentation 0).
+
+In filter:preserve and filter:preformatted, the Leading Whitespace to be
+replayed is calculated as the difference of the ContentBlock's actual
+indentation (indentation of the left-most text) relative to the filter's
+head (the indentation of the initial ":" colon), minus the IndentStep
+applicable to the filter's Head itself (between the :preserve, and its
+parent's Head, say '%code'). Because in WSE Haml a filter sets the BOD for
+its ContentBlock at an offset equal to the IndentStep applicable to the
+filter's Head itself, a simplier formulation is that any whitespace at and
+to the right of the ContentBlock's BOD is considered Leading Whitespace,
+which these two filters replay.
 
 =item Initial Whitespace
 
@@ -1303,7 +1317,7 @@ Haml features facilities that enables an author to produce HtmlOutput that,
 to varying extent, retains the surface structure of the HamlSource. 
 Think Html E<lt>preE<gt>, in varying flavors.
 
-Implementation note: The method by which such surface structure is retained
+Implementation note: The I<method> by which such surface structure is retained
 or represented during processing is implementation-dependent, only the
 form (including encoding) of the HtmlOutput is assured.
 
@@ -1315,7 +1329,7 @@ Legacy Haml offers these I<preserve> facilities:
 
 =item expression:~ (Tilde) alias for find_and_preserve
 
-=item hamltag:%ptag, where C<ptag> is listed in option:preserve
+=item hamltag:%ptag, where C<ptag> is listed in option:preserve, for Inline Content
 
 =item helper:preserve
 
@@ -1323,10 +1337,10 @@ Legacy Haml offers these I<preserve> facilities:
 
 =back
 
-Note that these break down to two main facilities: the B<FAP Facility> 
-for Inline Content (which might more fully be called 
-I<reencode_interior_newlines_occurring_between_listed_html_elements>),
-and the B<General Newline Transform facility> for Inline or Nested Content.
+Note that these break down to two main facilities: the B<FAP Facility>
+for Inline Content (which might more fully be called
+I<reencode_interior_newlines>), and the
+B<General Newline Transform facility> for Inline or Nested Content.
 
 The main concerns for Haml authors of such facilities: the ContentBlock,
 the transformation to HtmlOutput, and any restrictions to Haml, as follows:
@@ -1337,9 +1351,9 @@ the transformation to HtmlOutput, and any restrictions to Haml, as follows:
 
 =item * Restrictions on indentation for ContentBlock?
 
-=item * How are newlines transformed? A.k.a: How is I<preserve> accomplished?
+=item * How do transformed newlines appear in HtmlOutput? A.k.a: How is I<preserve> accomplished?
 
-=item * How is whitespace transformed in from HamlSource to HtmlOutput?
+=item * How is whitespace transformed in transit from HamlSource to HtmlOutput?
 
 =item * Interaction with escaping of Html?
 
@@ -1349,10 +1363,16 @@ the transformation to HtmlOutput, and any restrictions to Haml, as follows:
 
 WSE Haml extends the legacy facilities to attempt to I<complete> the set of
 whitespace-preserving operators and mechanisms, with C<option:preformatted>, 
-and HereDocs.
+the filter:preformatted facility, and HereDocs.
+
+TODO: Once the Initial Whitespace and Inline/Mixed Content extensions
+are supported, the I<preformatted> group of extensions seem the least
+compelling. Both the 'vtag' and filter:preformatted offering only minor
+convenience improvements. On the other hand HereDoc greatly simplifies
+a frequently-needed form of HamlSource-to-HtmlOutput transit.
 
 The following tables show how the above-listed concerns are addressed by 
-legacy Haml plus the WSE extensions. 
+legacy Haml plus the WSE Haml extensions.
 
 Nomenclature: Just as I<ptag> denotes (above) a tag listed in 
 C<option:preserve> (I<p> as in preserve), I<vtag> denotes a tag listed 
@@ -1360,66 +1380,185 @@ in the WSE extension C<option:preformatted> (that's I<v> for I<verbatim>).
 Also, I<H:preserve> refers to the helper function C<=preserve()>; the 
 I<F:preserve> refers to the filter operator C<:preserve>.
 
+Note that all of these facilities permit interpolation (although with
+differences in the interpretation of embedded whitespace or newlines
+introduced by dynamic variables). Neither F:preserve, F:preformatted,
+nor HereDoc will operate on other contained Haml (i.e., C<%atag> is
+replayed as the string I<%atag>).
+
+
+Language Contructs and ContentBlock Support
+
+      ================================================================================
       ContentBlock
-      Inline         Nested         Mixed permitted
-      ----------     ----------     ------------------
-      FAP            F:preserve
+      Inline          Nested            Mixed permitted
+      ----------      ----------        ------------------
+      FAP             F:preserve
       Tilde               
-      ptag           vtag *         vtag
+      ptag            ptag +
+                      vtag *            vtag
       H:preserve     
-                     HereDoc *
+                      F:preformatted *
+                      HereDoc *
 
       * New in WSE Haml
+      + atag semantics, essentially
 
 
+Language Constructs and Newline Treatement
+
+      ================================================================================
       Newline Treatment
       Transform \n to &#x000A;                 Emit \n
       -------------------------------------    -------------
       Only in <ptag></ptag>     All Content    All Content
       ----------------------    -----------    -------------
-      FAP                       F:preserve     HereDoc 
-      Tilde                     ptag           vtag
-                                H:preserve
+      FAP *                     F:preserve     F:preformatted
+      Tilde *                   ptag ^         vtag ^
+                                H:preserve     HereDoc
+
+      * FAP and Tilde perform their rencoding of \n-to-&#x000A; on every
+        \n interior to a <ptag>, ignoring any contained or containing <vtag>.
+      ^ A %ptag will transform all of its inline \n, even if a nested
+        descendent of a %vtag.  A %ptag with a Nested Content ContentBlock
+        adheres to %atag semantics; a %ptag with a HereDoc ContentBlock
+        processed that ContentBlock as if inline, using %ptag semantics.
 
 
+Language Constructs and Offsides, OIR, and OutputIndents
+
+      ================================================================================
       Observe and Enforce Offsides, Indentation
                             Offside for     OIR in
       Facility      n/a     ContentBlock    ContentBlock         OutputIndent
       ----------   ------   ------------    -----------------    ---------------------
-      FAP            x                                           Head
-      Tilde          x                                           Head
-      ptag           x                                           Head
-      H:preserve     x                                           Head
-      vtag                  Observed        OIR:strict,loose     Relative to Head BLM
-      F:preserve            Observed        Free Indentation *   Relative to Head BLM
+      FAP            x      (Inline)        (Inline)             Head
+      Tilde          x      (Inline)        (Inline)             Head
+      ptag           x      (Inline)        (Inline)             Head
+      H:preserve     x      (Inline)        (Inline)             Head
+      vtag                  Observed        OIR:strict,loose     Rigid shift to 0
+      F:preserve            Observed        Free Indentation *   Relative to Head BOD
+      F:preformatted        Observed        Free Indentation *   Relative to Head BOD
       HereDoc               NOT Observed    Free Indentation     Absolute
 
-      * Note on F:preserve: that particular combination of Offside plus OIR permits 
-        Free Indentation, provided the ContentBlock remains Onside of the Head --
-        that is, the author must align the Textlines under the :preserve head.
+      * Note on F:preserve: and F:preformatted: that particular combination
+        of Offside plus OIR permits free indentation, provided the
+        ContentBlock remains Onside of the Head -- that is, the author must
+        align the Textlines at and to the right of the BOD of the :preserve or
+        :preformatted head: at the Head's Indentation plus Head's IndentStep.
 
 
-Note that all of these facilities permit interpolation (although each 
-differ in the interpretation of embedded whitespace or newlines introduced
-by dynamic variables), and none will operate on other contained Haml 
-(i.e., C<%atag> is replayed as the string I<%atag>).
+Preformatted-type Language Constructs and HtmlOutput
 
-Using these tables we can summarize the benefits an author might seek
-in the related WSE Haml extensions:
+      ================================================================================
+      HtmlOutput by Interaction of Tag Category
+      (RSpec spec/05preformatted_spec.rb contains an example of each of these cases.)
+
+                              Nested Content Block
+                              atag              ptag              vtag
+                              ---------------   ---------------   ---------------
+
+      Direct
+         Initial wspc         Removed           Removed           After "%vtag "
+         Leading wspc         IndentStep        IndentStep        Nested Only
+         Newline transform    None              None              None
+         Tag placement        Vertical          Vertical          Vertical
+         HtmlOutput Align     OutputIndent      OutputIndent      Block shift to 0
+
+      F:preserve
+         Initial wspc         N/A               N/A               N/A
+         Leading wspc         Relative BOD      Relative BOD      Relative BOD
+         Newline transform    &#x000A;          &#x000A;          &#x000A;
+         Tag placement        Vertical          Horizontal        Vertical
+         HtmlOutput Align     OutputIndent      Relative to 0     Relative to 0
+
+      F:preformatted
+         Initial wspc         N/A               N/A               N/A
+         Leading wspc         Relative BOD      Relative BOD      Relative BOD
+         Newline transform    None              &#x000A;          None
+         Tag placement        Vertical          Vertical          Vertical
+         HtmlOutput Align     OutputIndent      Relative to 0     Relative to 0
+
+      HereDoc
+         Initial wspc         N/A               N/A               N/A
+         Leading wspc         Verbatim          Verbatim          Verbatim
+         Newline transform    None              &#x000A;          None
+         Tag placement        Vertical          Vertical          Vertical
+         HtmlOutput Align     OutputIndent      Relative to 0     Relative to 0
+
+      Key:
+       * Leading wspc + IndentStep:  Any apparent leading wspc is interpreted
+           as the IndentStep, not Leading Whitespace
+       * Leading wspc + Nested Only: With 'vtag', the leading whitespace of the
+           leftmost Textline is removed from all lines, and the block is shifted
+           to Indentation 0. The remaining nested lines retain their indentation.
+       * Leading wspc + Relative BOD: A Filter sets the BOD for its ContentBlock
+           at an offset equal to the IndentStep of it's Head. Any whitespace at
+           the ContentBlock's BOD or to the right, before text, is Leading
+           Whitespace, which these two Filters replay.
+       * Tag placement + Vertical: Symmetrically aligned at the same indentation,
+           with the content block rendered on interviening lines
+       * HtmlOutput Align + OutputIndent: The count of IndentSteps determines the
+           count of OutputIndentSteps. For atag and ptag with direct input: the
+           combination of "IndentStep" and "OutputIndent" means plaintext is
+           shifted flush at the OutputIndent, and any tags will be indented
+           by OutputIndents.
+
+      Rendering Variations:
+       * These cases produce unique renderings: Case 03 (vtag, direct),
+         Case 05 (ptag, preserve), Case 09 (vtag, preformatted),
+         Case 11 (ptag, HereDoc), and Case 12 (vtag, HereDoc)
+       * Case 01 (atag, direct) and Case 02 (ptag, direct) have the same
+         HtmlOutput indentation and newline rendering (with different tags)
+       * Case 06 (vtag, preserve), and Case 08 (ptag, preformatted) render
+         identical; Case 04 (atag, preserve) differs in indentation, only.
+       * Case 07 (atag ,preformatted) and Case 10 (atag, HereDoc) render identical
+
+Using these tables we can use a pairwise comparison to summarize the
+benefits an author might seek in the related WSE Haml extensions. The
+comparison looks at the three preformatted mechanisms in the WSE Extensions,
+and their respective newline treatments, tag alignment, and the following
+characteristic HtmlOutput modes:
+
+      * vtag: HtmlOutput shifted to 0
+      * filter:preformatted: HtmlOutput indent equals HamlSource offset from BOD
+      * HereDoc: HtmlOutput has indentation of HamlSource
 
 =over
 
 =item C<%vtag> over C<%ptag>
 
-Nested ContentBlock, including plaintext; and \n on HtmlOutput
+Nested ContentBlock, including plaintext; and \n on HtmlOutput,
+with ContentBlock always rigidly shifted to Indentation 0.
 
 =item C<%vtag> over C<f:preserve>
 
-HamlSource as normal tag (whose preserve-effect can be enabled/disabled); and \n on HtmlOutput
+HamlSource as normal tag; and \n on HtmlOutput, with ContentBlock
+always rigidly shifted to Indentation 0.
 
 =item C<HereDoc> over C<f:preserve>
 
 HamlSource is raw source; HtmlOutput is verbatim replication, with \n
+
+=item C<f:preformatted> over C<f:preserve>
+
+HamlSource nested structure, with \n
+
+=item C<f:preformatted> over C<%vtag>
+
+HtmlOutput is indented relative to :preformatted Head (by IndentStep
+from parent) rather than shifted to Indentation 0. Yet C<%vtag> permits
+an Inline fragment.
+
+=item C<HereDoc> over C<%vtag>
+
+ContentBlock HamlSource is replayed verbatim to HtmlOutput,
+rather than shifted to indentation 0.
+
+=item C<HereDoc> over C<f:preformatted>
+
+ContentBlock HamlSource is replayed verbatim to HtmlOutput,
+rather than indented relative to :preformatted Head.
 
 =back
 
@@ -1445,11 +1584,11 @@ Haml with WSE proposes we honor author choices:
         </p>
       </div>
 
-There are other justifications too. One is that there is simply no other 
-direct way (short of initial surprises in the output, and digging around 
-for operator magic, and adding that cruft to the HamlSource)  for an author 
-to accomplish that result. Another justification rests on minimizing the 
-memory load for authors -- minimizing the variety in manipulations of their 
+There are other justifications too. One is that there is simply no other
+direct way (short of initial surprises in the output, and digging around
+for operator magic, and adding that cruft to the HamlSource)  for an author
+to accomplish that result. Another justification rests on minimizing the
+memory load for authors -- minimizing the variety in manipulations of their
 HamlSource.
 
 Consider this (in legacy Haml, modulo whitespace bugs):
@@ -1463,10 +1602,10 @@ Consider this (in legacy Haml, modulo whitespace bugs):
 
 Multiline is a bit special, so let's consider instead the assumption that
 the Haml author might not be in full control of the content (or may feel
-the need to provide the quoted string directly in the Haml source). The 
+the need to provide the quoted string directly in the Haml source). The
 Haml Reference calls this "dynamically-generated":
 
-In legacy Haml (without resorting to the whitespace removal trim_in/out 
+In legacy Haml (without resorting to the whitespace removal trim_in/out
 cruft), the HtmlOutput processor imposes a change in surface structure:
 
       Code 8.8-03
@@ -1484,7 +1623,7 @@ cruft), the HtmlOutput processor imposes a change in surface structure:
 
       - strvar = "foo\nbar"
       %p eggs #{strvar} spam
-      <p>
+      <p>                           # Legacy Haml forces nesting for first line
         eggs foo
         bar spam
       </p>
@@ -1513,6 +1652,12 @@ need for the find_and_preserve cruft:
       %p= strvar                   # WSE Haml: Start my var's content tight
       <p>foo
         bar                        # Normalized indent, just as other cases
+      </p>
+
+      - strvar = "foo\nbar"
+      %p eggs #{strvar} spam
+      <p>eggs foo                  # WSE Haml: Same as previous case
+        bar spam
       </p>
 
 These cases lead to the more general cases.
@@ -1547,8 +1692,8 @@ WSE Haml handling of Initial Whitespace in quoted or interpolated material:
       </p>
 
 When the tag is a member of C<option:preserve> or C<option:preformatted> the
-extension in WSE Haml is to replay the author's input, I<preserving> the
-Initial Whitespace:
+extension in WSE Haml is to replay the author's Initial Whitespace,
+I<preserving> the Initial Whitespace:
 
       Code 8.8-07
 
@@ -1557,37 +1702,39 @@ Initial Whitespace:
         - strvar = "   foo\n   bar"
         %code= strvar
 
-      <div class='quux'>\n  <code>foo ...       # Legacy Haml fails to preserve
+      <div class='quux'>\n  <code>foo...        # Legacy Haml
 
 WSE Haml replays the Initial Whitespace:
 
       Code 8.8-08
 
+      :preserve => ['code']
       .quux
         %code= strvar
   
-      <div class='quux'>\n  <code>   foo ...    # WSE Haml replays the Initial Whitespace
+      <div class='quux'>\n  <code>   foo...     # WSE Haml replays the Initial Whitespace
 
-For Html preformatted tags, the WSE Haml result will be rendered
-differently, which presumably was the author's intention. 
+For Html preformatted tags, the UA result will be rendered differently
+which presumably reflects the author's intention.
 
-Next we look at the generated Html endtag for the same type of preserve 
+Next we look at the generated Html endtag for the same type of preserve
 element, one containing a newline that's been I<preserve>d. In this case,
 WSE Haml normalization produces HtmlOutput with a slight improvement
-in its correspondence to the author's HamlSource: Trailing Whitespace is 
-replayed, even if trailed by newlines; any number of final newlines are 
-consolidated into a single instance, and transformed (so, I guess that's 
-a change from elision to surjection). The result will not produce a 
+in its correspondence to the author's HamlSource: Trailing Whitespace is
+replayed, even if trailed by newlines: any number of final newlines are
+consolidated into a single instance, and transformed (so, I guess that's
+a change from elision to surjection). The result will not produce a
 difference in the rendering by an Html- or CSS-conformant renderer, unless
 by author CSS control ... which would now be possible.
 
       Code 8.8-09
 
+      :preserve => ['code']
       .quux
         - strvar = "   foo\n   bar  \n\n"
         %code= strvar
 
-      <div class='quux'>                            # Legacy Haml fails to preserve
+      <div class='quux'>                            # Legacy Haml drops \n
         <code>foo&#x000A;   bar</code>
       </div>
 
@@ -1595,6 +1742,7 @@ WSE Haml consolidates the trailing newlines, then transforms:
 
       Code 8.8-10
 
+      :preserve => ['code']
       .quux
         - strvar = "   foo\n   bar  \n\n"
         %code= strvar
@@ -1610,10 +1758,10 @@ so the matching endtag B<E<lt>/codeE<gt>> will appear symmetrically aligned
 to the starttag.
 
       HtmlOutput:
-      <div class='quux'><code>  foo&#x000A;   bar  &#x000A;</code>\n
+      <code>   foo&#x000A;   bar  &#x000A;</code>
  
       Native Html equivalent:
-      <code>  foo
+      <code>   foo
          bar  
       </code>
 
@@ -1654,13 +1802,21 @@ addition to that must be provided through expression or interpolation.
       %cope= strvar               # Arbitrary tag
 
       <code>   foo&#x000A;     bar  \n</code>
-      <cope>                       # Non-option:preserve tag 
-        foo
+      <cope>   foo                 # Not :preserve tag (Code 8.8-04, -06))
         bar                        # WSE Haml, Notice: only 1 OutputIndentStep
       </cope>
 
-When a preserve or preformatted tag contains only whitespace, the whitespace
-is replayed.
+The non-C<option:preserve> tag, C<%cope> is rendered according to
+the mechanisms presented above in Code 8.8-04, and Code 8.8-06.
+
+Where a C<option:preformatted> tag, I<vtag>, is substituted above,
+Initial Whitespace is preserved as described, but newline transforms
+are not performed, and in the case of Inline 'dynamic content',
+the C<%vtag> renders the content as a Nested Block giving vertically-
+aligned start-and-end tags, and an OutputIndent starting at indentation 0.
+
+When a preserve or preformatted tag contains only whitespace,
+the whitespace is replayed.
 
 
 =head3 Whitelines (Vertical whitespace)
@@ -1733,22 +1889,23 @@ will be interpolated or computed, including possibly null productions.
 
 =head2 Heads and Their Content Models
 
-This section contains additional details and comments for Haml with 
-WSE extensions. Refer to the RSpec and Test implementations for 
+This section contains additional details and comments for Haml with
+WSE extensions. Refer to the RSpec and Test implementations for
 further details and examples.
+
 
 =head3 General
 
-C<%tag Inline Content>, C<%tag\nNested Content>, and 
+C<%tag Inline Content>, C<%tag\nNested Content>, and
 C<%tag Inline Content\nNested Content> (Mixed Content) make up the
 bulk of Haml that embellish plaintext in the HamlSource. The Offside
-Rule and Orderly Indentation Rule (OIR) (default:loose) are both observed. 
+Rule and Orderly Indentation Rule (OIR) (default:loose) are both observed.
 
 Haml Comments may appear throughout the C<%tag> ContentBlock. Haml Comments
 observe Offsides, but in a change under WSE, do not enforce OIR. This latter
-change in WSE makes it possible for an author to comment-out blocks of Haml 
+change in WSE makes it possible for an author to comment-out blocks of Haml
 text (or even embedded literal Html) without having to change the indentation
-to satisfy OIR. See the Haml Comments notes regarding the extent of the 
+to satisfy OIR. See the Haml Comments notes regarding the extent of the
 ContentBlock for Haml Comments falling onside of a ContentBlock for another
 Haml Element.
 
@@ -1756,54 +1913,54 @@ Haml Element.
 =head3 Haml Comments
 
 Note: These details do not refer to Haml Comments used as processing
-instructions (presently: encoding 'coding' ) at the beginning of the 
+instructions (presently: encoding 'coding' ) at the beginning of the
 HamlSource.
 
-Legacy Haml permitted Mixed Content for Haml Comments, so: 
-C<-# Inline Comment>, C<-#\nNested Comment>, and 
-C<-# Inline Comment\nNested Comment> (Mixed Content). 
+Legacy Haml permitted Mixed Content for Haml Comments, so:
+C<-# Inline Comment>, C<-#\nNested Comment>, and
+C<-# Inline Comment\nNested Comment> (Mixed Content).
 
 In legacy Haml the Haml Comment ContentBlock enforced OIR: the ContentBlock
 ended upon Offside.
 
-Under WSE, Haml Comments do not enforce OIR. Haml Comments observe a 
-modified Offside Rule: regardless of the IndentStep, the BlockLeftMargin 
-is established at the minimum Indentation: the Indentation of the 
-Haml Comment lexeme, plus 1:
+Under WSE, Haml Comments do not enforce OIR. Haml Comments observe a
+modified Offside Rule: regardless of the IndentStep, the
+BlockOnsideDemarcation is established at the minimum Indentation:
+the Indentation of the Haml Comment lexeme, plus 1:
 
       Code 9.2-01
 
       0123
       -# Haml Comment Inline
        ^
-       | BlockLeftMargin, the reference for the Offside Rule in Haml Comments
+       | BlockOnsideDemarcation, the Offside Rule reference for Haml Comments
 
       0123
       -# 
          Haml Comment Nested
        ^
-       | BlockLeftMargin, the reference for the Offside Rule in Haml Comments
-         (Requires WSE Haml's OIR rules, unless under legacy Haml the file is 
-          globally using a 3-space IndentStep.) 
-   
+       | BlockOnsideDemarcation, the Offside Rule reference for Haml Comments
+         (Requires WSE Haml's OIR rules, unless under legacy Haml the file is
+          globally using a 3-space IndentStep.)
+
 In consequence, for TextLines in Haml Comments the indentation
 may increase and decrease arbitrarily ... provided they stay 'onside.'
 This offers more flexibility for commenting out code without changing
 it's indentation, making it easy to re-activate such code.
 
-As mentioned above, Haml Comments (within the HamlSource body) are 
-transparent to all other Haml processing. As such, an author could be 
-forgiven for thinking that a Haml Comment couldn't alter the semantics 
-of the interpreted Haml, that the Haml Comment should be absent from the 
-abstract tree. 
+As mentioned above, Haml Comments (within the HamlSource body) are
+transparent to all other Haml processing. As such, an author could be
+forgiven for thinking that a Haml Comment couldn't alter the semantics
+of the interpreted Haml, that the Haml Comment should be absent from the
+abstract tree.
 
 But there is one surprise: in legacy Haml a Haml Comment I<can> delimit
 a Multiline block, and therefore can break into two a larger Multiline block.
-This was suggested in the forums as a work-around for authors who were 
-surprised that a Whiteline couldn't perform that feat. So, even though it is 
-B<whack>, and in WSE a Whiteline can now also perform that feat, WSE 
-extensions will also, for backward compatibility, support Haml Comment in 
-that role. See details elsewhere in these Implementation Notes, and in 
+This was suggested in the forums as a work-around for authors who were
+surprised that a Whiteline couldn't perform that feat. So, even though it is
+B<whack>, and in WSE a Whiteline can now also perform that feat, WSE
+extensions will also, for backward compatibility, support Haml Comment in
+that role. See details elsewhere in these Implementation Notes, and in
 the RSpec test files.
 
 Concerning syntax, Haml lexemes are usually separated from their operands
@@ -1816,34 +1973,34 @@ are two legal (in legacy, and supported in WSE) Haml Comments:
       -#Text comment
 
 In legacy Haml, Mixed Content is prohibited for other operators: you get
-Inline Content or Nested Content, but not the combination. Having Mixed 
+Inline Content or Nested Content, but not the combination. Having Mixed
 Content as a normal content model throughout legacy Haml would have enhanced
-author expression and control over semantics and output, and enhances 
-maintenance. Permitting Mixed Content for Haml Comments, however, gave 
+author expression and control over semantics and output, and enhances
+maintenance. Permitting Mixed Content for Haml Comments, however, gave
 I<general content>-scope semantics for a meta operator. As it has
 turned out, it was an unfortunate design choice.
 
-WSE Haml, to the contrary, allows Mixed Content in all but a few cases 
-(e.g., doctype). In addition, WSE Haml widely permits OIR:loose ... in 
-which the ContentBlock need not follow strict indentation, provided it 
+WSE Haml, to the contrary, allows Mixed Content in all but a few cases
+(e.g., doctype). In addition, WSE Haml widely permits OIR:loose ... in
+which the ContentBlock need not follow strict indentation, provided it
 remains 'onside'.
 
 Ideally, the entirety of the WSE extensions would present no conflict
-with Haml Comments, for both general and specific reasons. The general 
-reason: keeping the rules of HamlSource syntax and generated HtmlOutput 
-simple, while enabling forms authors are likely to use. The more specific 
+with Haml Comments, for both general and specific reasons. The general
+reason: keeping the rules of HamlSource syntax and generated HtmlOutput
+simple, while enabling forms authors are likely to use. The more specific
 reason: when commenting-out existing Haml code, an author shouldn't have
 to restructure the code (changing all the indenting from a compliance with
-OIR:loose to that of OIR:strict), complicating what is still communicated 
+OIR:loose to that of OIR:strict), complicating what is still communicated
 in the source, and any later reversal.
 
 The two do come into conflict, however: a Haml Comment with nesting
-Textlines could be difficult to separate from the content of an immediately 
+Textlines could be difficult to separate from the content of an immediately
 enclosing Element having Mixed or Nested Content. This was already a
-challenge for authors in legacy Haml, but with OIR:loose the challenge has 
-grown under WSE. 
+challenge for authors in legacy Haml, but with OIR:loose the challenge has
+grown under WSE.
 
-Consider the following Haml, perhaps program-generated. We have C<%scat> 
+Consider the following Haml, perhaps program-generated. We have C<%scat>
 categories, each with three children (oir:loose).
 
       Code 9.2-03
@@ -1880,12 +2037,12 @@ would have been better:
                    %sname Amplifier
                   %sdescr 60watt reverb
 
-If Haml Comments were just either-or Inline or Nested this Inline case would 
-work fine: only that line would have been taken up in the Haml Comment. 
-But the Nested-only case could not have meet all the criteria for this 
-particular XML author's obsession. The solution under WSE is similar to what
-the author would have done if trying a Nested-only approach: in WSE you have
-to add a line, a Whiteline. 
+If Legacy-style Haml Comments were just either-or Inline or Nested this
+Inline case would work fine: only that line would have been taken up in the
+Haml Comment. But the Nested-only case could not have meet all the criteria
+for this particular XML author's obsession. The solution under WSE is similar
+to what the author would have done if trying a Nested-only approach: in WSE
+you have to add a line, a Whiteline.
 
       Code 9.2-05
 
@@ -1906,13 +2063,13 @@ TODO: How disruptive would it be to I<disallow> the Legacy Haml support
 for Mixed Content for Haml Comments?
 
 This approach allows authors much more freedom in the placement of their
-leading "-#" and insertion of any commentary, while preserving the 
-indentation of their original text ... at a small incompatibility with 
-some legacy Haml. 
+leading "-#" and insertion of any commentary, while preserving the
+indentation of their original text ... at a small incompatibility with
+some legacy Haml.
 
 To recap: Under WSE, the Haml Comment supports the legacy Content Models of
-Inline, Nested, and Mixed Content. The extent of its ContentBlock is the 
-first of: Offsides (the BLM is at the Head indentation + 1), or a Whiteline.
+Inline, Nested, and Mixed Content. The extent of its ContentBlock is the
+first of: Offsides (the BOD is at the Head indentation + 1), or a Whiteline.
 
 Finally, Haml Comments are B<not> recognized in HereDoc ContentBlocks:
 the line is taken as just another Line to copy through.
@@ -1920,15 +2077,15 @@ the line is taken as just another Line to copy through.
 
 =head3 Html Comments
 
-Html Comments are supported in these forms: C</ Inline Comment>, 
-C</\nNested Comment>, and C</ Inline Comment\nNested Comment> 
+Html Comments are supported in these forms: C</ Inline Comment>,
+C</\nNested Comment>, and C</ Inline Comment\nNested Comment>
 (Mixed Content).
 
 Html Comments may appear throughout a C<%tag> ContentBlock.
 
-Html Comments do not observe OIR. Html Comments follow a modified 
-Offside Rule: regardless of the IndentStep, the BlockLeftMargin is 
-established at the minimum Indentation: the Indentation of the 
+Html Comments do not observe OIR. Html Comments follow a modified
+Offside Rule: regardless of the IndentStep, the BlockOnsideDemarcation is
+established at the minimum Indentation: the Indentation of the
 Html Comment lexeme, plus 1:
 
       Code 9.3-01
@@ -1936,25 +2093,25 @@ Html Comment lexeme, plus 1:
       0123
       / Html Comment Inline
        ^
-       | BlockLeftMargin, the reference for the Offside Rule
+       | BlockOnsideDemarcation, the reference for the Offside Rule
 
 A space is not required between the initial "/" and the content block.
 
-WSE Haml introduces two additional Html Comment facilities to free authors 
+WSE Haml introduces two additional Html Comment facilities to free authors
 of the repetitive weed-pulling of changing Haml Comment annotations, yet
-still generate HTML that's not just pretty, but also well-formed. The first 
-facility concerns nesting of the "/ " within another "/ " Element. Instead 
-of creating a second, (improperly) enclosed, HTML comment element, WSE Haml 
-defangs this surprise: the contained "/ " is replayed literally, as part of 
-the enclosing Html comment text. 
+still generate HTML that's not just pretty, but also well-formed. The first
+facility concerns nesting of the "/ " within another "/ " Element. Instead
+of creating a second, (improperly) enclosed, HTML comment element, WSE Haml
+defangs this surprise: the contained "/ " is replayed literally, as part of
+the enclosing Html comment text.
 
-The second facility concerns another scenario where authors think they 
-are writing/maintaining Haml, which is mostly plaintext with a sprinkling 
-of Haml lexemes and Ruby/Perl, but most certainly is I<not> Html. This 
-(and the fact that legacy Haml supports interpolation inside the Haml 
-Html Comment ContentBlock, as does WSE Haml) easily leads to the case of 
-two hyphens--a common feature of plaintext--appearing inside an 
-HTML-compliant comment, such as when a Haml author prefixes what is 
+The second facility concerns another scenario where authors think they
+are writing/maintaining Haml, which is mostly plaintext with a sprinkling
+of Haml lexemes and Ruby/Perl, but most certainly is I<not> Html. This
+(and the fact that legacy Haml supports interpolation inside the Haml
+Html Comment ContentBlock, as does WSE Haml) easily leads to the case of
+two hyphens--a common feature of plaintext--appearing inside an
+HTML-compliant comment, such as when a Haml author prefixes what is
 otherwise plaintext with the Haml Comment lexeme. (A simplified variation
 of this case was raised in GitHub Issue 88 and was met with one of those
 "don't do that" responses mentioned in the introduction of these Notes.)
@@ -2011,27 +2168,27 @@ Initial whitespace is removed. The trailing whitespace (before the
 the next line is consolidated (into a single space). Whitespace around
 any interpolated newlines receives the same treatment.
 
-Because Multiline provides an author an alternative method of providing 
-HamlSource, interpolated newlines I<do not> break the Multiline. This 
+Because Multiline provides an author an alternative method of providing
+HamlSource, interpolated newlines I<do not> break the Multiline. This
 is a change from Legacy Haml, which exhibits an inexplicable reversal 
-in processing, in that surface syntax is interpreted B<after> content 
-semantics. What happens in WSE Haml: The lexer builds an AST having 
-the Parent Element's Head as a node, having a Nested ContentBlock, 
-and having as its child a node for the Multiline syntactic form. The 
-lexer strips the ContentBlock of Multiline Elements of the Multiline 
-Lexemes, leaving for the parser (subsequently) to process the lines 
+in processing, in that surface syntax is interpreted B<after> content
+semantics. What happens in WSE Haml: The lexer builds an AST having
+the Parent Element's Head as a node, having a Nested ContentBlock,
+and having as its child a node for the Multiline syntactic form. The
+lexer strips the ContentBlock of Multiline Elements of the Multiline
+Lexemes, leaving for the parser (subsequently) to process the lines
 and then finally combine the lines according to Multiline I<semantics>.
 
-If the Head of a Textline contains "-#" that line will terminate a 
-Multiline Text block (as in legacy Haml), B<even if> that line ends with 
-the " |" pipe lexeme (a WSE Haml variance to legacy Haml). This idiom 
-(of Haml Comment-demarcation of two adjacent Multiline Elements) is 
-deprecated: the recommended separator of two adjacent Multiline 
+If the Head of a Textline contains "-#" that line will terminate a
+Multiline Text block (as in legacy Haml), B<even if> that line ends with
+the " |" pipe lexeme (a WSE Haml variance to legacy Haml). This idiom
+(of Haml Comment-demarcation of two adjacent Multiline Elements) is
+deprecated: the recommended separator of two adjacent Multiline
 ContentBlocks is the Whiteline.
 
-TODO: It would be better to undo this blooper in legacy Haml syntax, 
-to thereby allow an author to easily remove a line from a Multiline Text 
-block by Haml-Commenting it, while not breaking the overall Multiline. 
+TODO: It would be better to undo this blooper in legacy Haml syntax,
+to thereby allow an author to easily remove a line from a Multiline Text
+block by Haml-Commenting it, while not breaking the overall Multiline.
 But would the breakage in legacy Haml code be too great?
 
 
@@ -2041,11 +2198,11 @@ As presented above, HereDoc is a WSE Haml Content Model, which provides
 the entire ContentBlock to its Element. It is an alternative to Inline
 Content, Nested Content, or Mixed Content.
 
-Within HereDoc Content, the Orderly Indentation Rule and BlockLeftMargin
-effects (including Offside) are suspended. 
+Within HereDoc Content, the Orderly Indentation Rule and BlockOnsideDemarcation
+effects (including Offside) are suspended.
 
-The HereDoc ContentBlock is inert with respect to Haml tags, =expressions, 
--code, and so on. It is processed for interpolation (as if a double-quoted 
+The HereDoc ContentBlock is inert with respect to Haml tags, =expressions,
+-code, and so on. It is processed for interpolation (as if a double-quoted
 string).
 
       Code 9.5-01
@@ -2070,9 +2227,13 @@ string).
       </body>
 
 Notice: 
- *   The HereDoc is replayed without adjusting indentation, and
- *   Interpolation is supported, and
+ *   The HereDoc is replayed without adjusting indentation
+ *   Interpolation is supported
  *   The Haml Comment syntax is ignored -- it is just plaintext
+ *   When a HereDoc ContentBlock is provided to an option:preserve
+     tag (so-called %ptag), the resulting ContentBlock is handled
+     as if Inline, meaning it is processed with 'preserve' semantics,
+     including transformation of \n to &#x000A;.
 
 An extended syntax is provided, permitting indentation of the terminal 
 delimiter:
@@ -2096,18 +2257,20 @@ last:
 
       Code 9.5-03
 
-      %p{:a => 'b',
-         :y => 'z'}<<DOC
-      HereDoc Para
-      DOC
+      %dir
+        %p{:a => 'b',
+           :y => 'z'}<<DOC
+       HereDoc Para
+       DOC
 
 Here with the trim_out lexeme:
 
       Code 9.5-04
 
-      %p><<DOC
-      HereDoc Para
-      DOC
+      %dir
+        %p><<DOC
+       HereDoc Para
+       DOC
 
 A Textline following the Line containing the HereDoc Terminator is,
 either the sibling to the Element to which the HereDoc provides its
@@ -2178,7 +2341,9 @@ missing content in the HtmlOutput):
       %img<<DOC        # %img is included in autoclose; no content
       HereDoc
       DOC
-    
+
+      Haml::SyntaxError
+
 Inline autoclose lexeme:
 
       Code 9.5-08
@@ -2187,13 +2352,15 @@ Inline autoclose lexeme:
       HereDoc
       DOC
 
+      Haml::SyntaxError
+
 As noted above, the HereDoc is a method for providing an Element's
 ContentBlock: where an Element supports HereDocs, that Element's 
 resulting ContentBlock (after the HereDoc interpretation, including 
 interpolation) is valid for any type of Content Model (Inline, Nested, 
 or Mixed). If, for example, the Element's Head is listed in 
 C<option:preserve>, the standard preserve transformations will be 
-eventually be applied. 
+eventually applied.
 
 TODO: Perhaps plaintext or interpolated text might follow the HereDoc lexeme,
 after the fashion of C<helper:succeed>? The following three examples explore
@@ -2248,76 +2415,81 @@ treatment should be applied to preserve some aspects of the ContentBlock's
 whitespace.
 
 This special treatment occurs in two cases; both cases apply only when the
-Element is determined to have (only) Inline Content. Nested Content will 
+Element is determined to have (only) Inline Content. Nested Content will
 not prompt the special treatment; this is unchanged in WSE Haml,
 as a change would affect many occurrences of a I<preserve> Head.
 
-(TODO: If, instead, a case were made to change C<option:preserve> to 
-support Nested content, such a change would be compatible with WSE Haml. 
-This would bring many of the benefits that C<option:preformatted> brings 
-to the listed tags, yet preformatted would still be beneficial as it 
-offers other mechanisms--OIR:loose, replay of whitespace, and newlines 
+(TODO: If, instead, a case were made to change C<option:preserve> to
+support Nested content, such a change would be compatible with WSE Haml.
+This would bring many of the benefits that C<option:preformatted> brings
+to the listed tags, yet preformatted would still be beneficial as it
+offers other mechanisms--OIR:loose, replay of whitespace, and newlines
 without special entities.)
 
-If an Element's Head is an expression with C<find_and_preserve> or a 
+If an Element's Head is an expression with C<find_and_preserve> or a
 Tilde-expression (C<~ expr>), then the special treatment is applied to a
-segment of the Element's Inline ContentBlock: within the Inline content, 
-newlines occurring between the HTML start tag and HTML end tag of a 
+segment of the Element's Inline ContentBlock: within the Inline content,
+newlines occurring between the HTML start tag and HTML end tag of a
 C<option:preserve>-listed tag will be transformed (with special handling
 of any trailing newlines). The other newlines are not transformed.
 
 In the second case, if an Element's Head is one of the tags listed in
-C<option:preserve>, then the special treatment (transformation of newlines) 
-is applied to the entire Inline content. This includes the content provided 
+C<option:preserve>, then the special treatment (transformation of newlines)
+is applied to the entire Inline content. This includes the content provided
 via a HereDoc ContentBlock.
 
 In a variant of this second case, if an Element's Head B<is> a member of
 C<option:preserve>, and instead of an Inline ContentBlock is determined to
-have a Nested (only) ContentBlock, no special treatment is applied: the 
+have a Nested (only) ContentBlock, no special treatment is applied: the
 result is as if the tag were B<not listed> in C<option:preserve>.
+
+In all cases the WSE-altered Initial Whitespace handling occurs B<before>
+the I<preserve> mechanics.
 
 Take careful note of an important interaction between an C<option:preserve>
 tag and nesting content. In legacy Haml, Mixed Content was prohibited, thus
-the absence of Inline Content, and the presence of a Nested Content 
-ContentBlock signals that the tag should be treated as a normal tag (no 
-special treatment). WSE Haml, however, introduces Mixed Content ... which 
-appears like a combination of Inline and Nested Content. This would be an 
+the absence of Inline Content, and the presence of a Nested Content
+ContentBlock signals that the tag should be treated as a normal tag (no
+special treatment). WSE Haml, however, introduces Mixed Content ... which
+appears like a combination of Inline and Nested Content. This would be an
 error in legacy Haml, and it remains, for C<option:preserve> tags, an error
-in WSE Haml. If Mixed Content is desired/necessary, perhaps the 
+in WSE Haml. If Mixed Content is desired/necessary, perhaps the
 C<option:preformatted> treatment would be suitable.
 
 A tag's membership in C<option:preformatted> takes precedence over its
-membership in C<option:preserve>. In WSE Haml tags C<%pre> and 
-C<%textarea> are by default removed from C<option:preserve> and listed in 
-C<option:preformatted>. Authors will also list in C<option:preformatted> 
-the tags for which they've assigned CSS-style C<white-space:pre>-like 
-mechanics (or will have such tags' ContentBlock supplied via C<HereDoc> 
+membership in C<option:preserve>. In WSE Haml tags C<%pre> and
+C<%textarea> are by default removed from C<option:preserve> and listed in
+C<option:preformatted>. Authors will also list in C<option:preformatted>
+the tags for which they've assigned CSS-style C<white-space:pre>-like
+mechanics (or will have such tags' ContentBlock supplied via C<HereDoc>
 or C<filter:preformatted>).
 
 One difference between the two treatments (preserve, versus preformatted)
 is the surface structure of the HtmlOutput: the placement of element
-content with respect to the Html start tag and the Html end tag. Preserve 
-mechanics will run the element's content I<inline> with the start tag and 
+content with respect to the Html start tag and the Html end tag. Preserve
+mechanics will run the element's content I<inline> with the start tag and
 end tag (including when supplying a C<filter:preserve> content block);
-Preformatted mechanics will run the element's content I<nested>.
+Preformatted mechanics will run the element's content I<nested>, with the
+start tag and end tag vertically aligned at the same indentation.
 
       Code 9.6-01
 
       :preserve => ['ptag']
+      :strvar => "toto\ntutu"
 
       .wspcpre
-      %snap
-        %ptag= "Bar\nBaz"
-      %crak
-        %ptag #{strvar}
-      %pahp
-        %ptag
-          :preserve
+        %snap
+          %ptag= "Bar\nBaz"
+        %crak
+          %ptag #{strvar}
+        %pahp
+          %ptag                             # Trailing whitespace below
+            :preserve
                 def fact(n)  
                   (1..n).reduce(1, :*)  
                 end  
 
-      <div class='wspcpre'>
+      <div class='wspcpre'>                 # Legacy Haml
         <snap>
           <ptag>Bar&#x000A;Baz</ptag>
         </snap>
@@ -2328,17 +2500,41 @@ Preformatted mechanics will run the element's content I<nested>.
           <ptag>  def fact(n)  &#x000A;    (1..n).reduce(1, :*)  &#x000A;  end</ptag>
         </pahp>
       </div>
-    
-    Notice: The OutputIndent for filter:preserve is 2 spaces--that is the
-    difference after the IndentStep is removed (legacy Haml file-global,
-    or WSE Haml OIR-calculated). Here, in legacy Haml, the IndentStep is 2,
-    so the remainder is 2, and that Initial Whitespace is replayed.
-    
+
+In the above, for filter:preserve, the preserved Leading Whitespace for the
+"def fact..." block is 2 spaces. That is calculated as the difference of the
+block's actual indentation relative to the :preserve head (4 spaces), minus
+the prevailing IndentStep, in this case 2 spaces. While Legacy Haml uses a
+constant IndentStep throughout a given HamlSource, WSE Haml permits a
+variable IndentStep, thus we must generalize that rule, as follows: the
+preserved Leading Whitespace is calculated as the difference of the block's
+actual indentation relative to the :preserve head, minus the IndentStep
+of the :preserve head itself.
+
+While in general, in WSE Haml, a Filter establishes a BOD for its
+ContentBlock, both filter:preserve (and filter:preformatted) will accept
+a ContentBlock provided it is to the right of the minimum possible BOD,
+at the indentation of the 'p' in ":preserve". Using the forumlation above
+this would produce a negative offset, which is instead forced to 0.
+
+Also, in the above, Trailing Whitespace passed through C<filter:preserve>.
+
+In the following example, in order to show the mechanics, the WSE Haml helper
+C<html_tabstring> is used to increase the size of the OutputIndentStep, while
+keeping constant the number of 'tabs'.
+
       Code 9.6-02
 
       :preformatted = ['vtag']
+      :strvar => "toto\ntutu"
+      - html_tabstring('   ')               Clarify indentation adjustments
 
       .wspcpre
+        %spqr
+          %vtag Dirigo
+             Regnat Populus
+               Justitia Omnibus
+            Esse quam videri
         %snap
           %vtag= "Bar\nBaz"
         %crak
@@ -2350,52 +2546,77 @@ Preformatted mechanics will run the element's content I<nested>.
                   (1..n).reduce(1, :*)  
                 end  
         %vtag<<ASCII
-      o           .'`/
-          '      /  (
-        O    .-'` ` `'-._      .')
-           _/ (o)        '.  .' /
-           )       )))     ><  <
-           `\  |_\      _.'  '. \
-             `-._  _ .-'       `.)
-         jgs     `\__\
+       o           .'`/
+           '      /  (
+         O    .-'` ` `'-._      .')
+            _/ (o)        '.  .' /
+            )       )))     ><  <
+            `\  |_\      _.'  '. \
+              `-._  _ .-'       `.)
+          jgs     `\__\
       ASCII
 
 
-      <div class='wspcpre'>
-        <snap>
-          <vtag>
-      Bar
-      Baz
-          </vtag>
-        </snap>
-        <crak>
-          <vtag>
+      <div class='wspcpre'>                 # WSE Haml
+         <spqr>                             # Indented 3 spaces: haml_tabstring
+            <vtag>Dirigo                    # Inline fragment
+       Regnat Populus                       # Nested fragment indented as a
+         Justitia Omnibus                   # rigid block from indentation 0
+      Esse quam videri
+            </vtag>
+         </spqr>
+         <snap>
+            <vtag>                          # Notice: opt:preformatted tag
+      Bar                                   # Inline renders relative to 0
+      Baz                                   # Would replay initial and leading wspc
+            </vtag>
+         </snap>
+         <crak>
+            <vtag>
       toto
       tutu
-          </vtag>
-        </crak>
-        <pahp>
-          <vtag>
-            def fact(n)  
-              (1..n).reduce(1, :*)  
-            end  
-          </vtag>
-        </pahp>
-        <vtag>
-      o           .'`/
-          '      /  (
-        O    .-'` ` `'-._      .')
-           _/ (o)        '.  .' /
-           )       )))     ><  <
-           `\  |_\      _.'  '. \
-             `-._  _ .-'       `.)
-         jgs     `\__\
-        </vtag>
+            </vtag>
+         </crak>
+         <pahp>
+            <vtag>                          # filter:preserve replays offset
+        def fact(n)  
+          (1..n).reduce(1, :*)  
+        end  
+            </vtag>                         # Notice: trailing whtspc replayed
+         </pahp>
+         <vtag>                             # HamlSource replay, unshifted
+       o           .'`/
+           '      /  (
+         O    .-'` ` `'-._      .')
+            _/ (o)        '.  .' /
+            )       )))     ><  <
+            `\  |_\      _.'  '. \
+              `-._  _ .-'       `.)
+          jgs     `\__\
+         </vtag>
       </div>
 
-    Notice: Under WSE Haml, filter:preformatted delivers a ContentBlock 
-    with the BLM of its ContentBlock aligned with the indentation of the 
-    :preformatted Head.
+      Notes:
+       * option:preformatted tags (here, the %vtag) are, in HtmlOutput,
+         indented  as normal: the count of IndentSteps in the HamlSource times
+         the OutputIndentStep -- here, a total of 6 spaces.
+       * The Nested portion of a preformatted tag need only stay Onside.
+         Regardless if the HamlSource indentation, it is rendered in HtmlOutput
+         at indentation 0.
+       * Although Nested Content is expected to be the primary use of a vtag,
+         Inline Content is permitted--just note that under CSS white-space:pre
+         the UA will not produce the alignment seen in HamlSource.
+       * When rendering a %vtag with Inline Content, the "%vtag " Head is
+         removed, and the remaining Inline fragment is rendered following the
+         resulting <vtag>.
+       * Inline 'dynamic' content is rendered relative to 0, with initial and
+         leading whitespace replayed.
+       * Filter:preformatted delivers a ContentBlock with the 'offside'
+         whitespace removed. The BOD for a Filter is at the offset from the
+         Filter's Head equal to the Head's IndentStep from its parent. The
+         ContentBlock is rendered nested (the <vtag> start tag, and the </vtag>
+         end tag are rendered symmetrically, vertically aligned at the same
+         Indentation, in lines separate from the ContentBlock).
 
 The particular newline transformation associated with preserve is further 
 documented above, below in "find_and_preserve", and in 
@@ -2418,17 +2639,18 @@ Here is an example from the Haml Reference (for "~ expr"), and variants:
         = find_and_preserve("Foo\n%Bar\nBaz")
         = find_and_preserve("Foo\n<xre>Bar\nBaz</xre>")
 
-Legacy Haml gives this result, which since it lacks Initial or 
-Trailing Whitespace, and trailing newlines, is the same in WSE Haml:
+Legacy Haml gives this result. Because the HamlSource lacks Initial or
+Trailing Whitespace, and trailing newlines, the result is the same in
+WSE Haml:
 
       <zot>
         Foo\n  <pre>Bar&#x000A;Baz</pre>
         Foo\n  %Bar\n  Baz
-        Foo\n  <xre>Bar\n    Baz</xre>
+        Foo\n  <xre>Bar\n  Baz</xre>
       </zot>
 
 If escaped HtmlOutput is requested, here's the result--with the WSE Haml
-fix for producing HtmlOutput that's escaped, which prevents escaping an 
+fix for producing HtmlOutput that's escaped, which prevents escaping an
 already-escaped entity:
 
       Code 9.7-02
@@ -2438,12 +2660,24 @@ already-escaped entity:
       <zot>
         Foo\n  &lt;pre&gt;Bar&#x000A;Baz&lt;/pre&gt;
         Foo\n  %Bar\n  Baz
-        Foo\n  <xre>Bar\n    Baz</xre>
+        Foo\n  &lt;xre&gt;Bar\n  Baz&lt;/xre&gt;
       </zot>
+
 
 =head3 Preserve Expression Head: "~ expr"
 
 The whitespace mechanics are the same as for C<helper:find_and_preserve>.
+
+From the Haml Reference:
+
+     For example,
+
+        ~ "Foo\n<pre>Bar\nBaz</pre>"
+
+     is the same as:
+
+        = find_and_preserve("Foo\n<pre>Bar\nBaz</pre>")
+
 
 Note that WSE Haml will produce a different result from legacy Haml in the 
 case when the author requests escaped HtmlOutput, correcting a difference
@@ -2453,11 +2687,13 @@ in legacy Haml between find_and_preserve and the tilde operator:
 
       options: preserve => 'pre', html_escape => true
       %zot
+        = find_and_preserve("Foo\n<pre>Bar\nBaz</pre>")
         ~ "Foo\n<pre>Bar\nBaz</pre>"
 
       The buggy legacy Haml result:
 
       <zot>
+        Foo\n  &lt;pre&gt;Bar&#x000A;Baz&lt;/pre&gt;
         Foo\n  &lt;pre&gt;Bar\n  Baz\n&lt;/pre&gt;
       </zot>
 
@@ -2468,17 +2704,21 @@ in legacy Haml between find_and_preserve and the tilde operator:
 
       <zot>
         Foo\n  &lt;pre&gt;Bar&#x000A;Baz&lt;/pre&gt;
+        Foo\n  &lt;pre&gt;Bar&#x000A;Baz&lt;/pre&gt;
       </zot>
+
 
 =head3 Filter: preserve
 
 The whitespace mechanics are the same as for the C<option:preserve>.
+
 
 =head3 Helper: preserve
 
 The whitespace mechanics are the same as for C<Filter:preserve>,
 with the exception that Helper:preserve is altered according to
 the WSE Haml extensions to produce the idempotent Html escaping.
+
 
 =head3 Preformatted
 
@@ -2505,6 +2745,16 @@ Under preformatted, the Inline Content may appear slightly different in the
 HtmlOutput, but that will be not the result of interpretation under a 
 different Content Model, but the result of small differences from the 
 C<option:preserve> implementation.
+
+As explained above for filter:preserve, WSE filter:preformatted delivers a
+ContentBlock with the offside whitespace removed: whitespace at and to the
+right of the BOD are replayed. The Filter's official BOD is at the same
+offset from the Filter's Head as that Head is from its parent's Head.
+Although this BOD is used for calculating the whitespace to replay, the
+Filter will accept any ContentBlock that is to the right of the minimum
+possible BOD, at the indentation of the 'p' in ":preformatted." Where the
+whitespace calculation produces a negative offset, it is instead
+forced to 0.
 
 
 =head3 option:ugly
@@ -2656,8 +2906,9 @@ The new operators:
                                     OutputIndent.
 
       html_tabstring     Helper     HtmlOutput
-                                    Yields the string used for a single 'tab'
-                                    of the OutputIndent 
+                                    Get: Yields the string used for a
+                                    single 'tab' of the OutputIndent
+                                    Set: Sets the string used
 
 The following table lists the new operators and newly-assigned aliases, 
 indicating the operator's locus of production or side-effect (HamlSource, 
@@ -2678,7 +2929,7 @@ or HtmlOutput).
                                 |  helper:tab_down        (unchanged)
                                 |  helper:with_tabs       (unchanged)
                                 |  helper:html_tabs       (WSE proposed function)
-                                |  helper:html_tabstring  (WSE proposed function)
+                                |  helper:html_tabstring  (WSE proposed function get/set)
 
                                 |  helper:surround        (unchanged)
                                 |  helper:precede         (unchanged)
@@ -2740,6 +2991,35 @@ An author may request HtmlOutput with some portion of the Html escaped.
 To deliver HtmlOutput with escaped Html, WSE Haml performs
 Option/DocType-sensitive escaping.
 
+Regarding the motivations for the change in escaped HtmlOutput. One
+motivation concerns the semantics of document processing: In Html, an
+escaped text is one which each symbol intended as [plain] text is of an
+encoding which assures it will transit document processing and be rendered
+as [plain] text. More particularly, that all symbols having significance to
+Html document syntax processing be represented (here, encoded) in such a way
+as to I<escape> such syntax processing. Thus, B<in Html>, considering two
+separate encodings of the ampersand, I<&> is a symbol susceptible to Html
+syntax processing, which would require a different encoding when a part of
+[plain] text; I<&amp;> is not, and does not.
+
+As a more Haml-focused motivation, WSE Haml in general manifests a change
+of focus from a mostly processing- and programmer-focused view, to that
+of an author-focused HamlSource and HtmlOutput view. Thus WSE Haml
+changes 'escaping' transforms from that of 'sanitizing' or 'find-replace',
+programmer-focused mechanics, to that of the HtmlOutput, author-focused
+results.
+
+The escaping changes apply across I<all> Haml operators, whether requested
+at the operator level, or through C<option:escape_html>, including an
+operator such as the Tilde or Ampersand expressions (C<~ expr> and C<& expr>)
+and helper functions such as C<helper:capture_html>, operating individually
+or in composition.
+
+Note: Sanitizing user input is a separate matter: an input processor
+providing HamlSource B<should> sanitize I<input> of the form C<&amp;>
+to C<&amp;amp;>, which WSE Haml, while processing that HamlSource and
+generating HtmlOutput, will not further transform.
+
 As mentioned above, there are two effects tempered by Options and the 
 DocType:
 
@@ -2794,12 +3074,14 @@ To be clear about conflicting configuration, the rule is:
 
 =over
 
-=item BlockLeftMargin (BLM)
+=item Block Onside Demarcation (BOD)
 
-The offset indentation that serves as the point of reference for
-I<Offside>: the minimum Indentation at which a Textline is considered
-to fall within an Element's ContentBlock. In ISWIM, the southeast
-quadrant from the Element's Head containing the Elements' definition. 
+The Indentation that serves as the point of reference for I<Offside>.
+An Element's BlockOnsideDemarcation is the Indentation at which a Textline,
+and those of greater Indentation, is considered to fall within an Element's
+ContentBlock. In ISWIM: the southeast quadrant from the Element's Head
+containing the Elements' definition. The minimum Indentation for an
+Element's BOD is its Head's Indentation, plus 1.
 
 =item Element
 
@@ -2846,6 +3128,19 @@ Haml Comments rely on a Whiteline to terminate its ContentBlock.
 
 Whether the Element's ContentBlock may take Inline Content, Nested Content,
 Mixed Content, or HereDoc Content.
+
+=item Escaped HtmlOutput
+
+WSE Haml implements an idempotent, fixed point, model: C<&amp;> never
+becomes C<&amp;amp;>. In addition, escaping of HtmlOutput is DocType
+sensitive.
+
+Concerning escaping, WSE Haml manifests a change of focus from a mostly
+processing- and programmer-focused view, to that of an author-focused
+view of HamlSource and HtmlOutput. Thus WSE Haml changes 'escaping'
+transforms from that of programmer-focused mechanics such as 'sanitizing'
+or 'find-replace', to that of an author focused on the resulting
+HtmlOutput.
 
 =item HamlSource
 
@@ -3034,29 +3329,38 @@ wants a fragment displayed in HtmlOutput as a single line.
 
 Corresponding to this document is an RSpec test suite. 
 
-The plan is that the first, I<OOImplementationNotes>, contain all the code,
+In an earlier draft, file I<OOImplementationNotes>, contained all the code,
 in sequence (with the associated major head identified), as found in this 
-document (WSE Implementation Notes).
+document (WSE Implementation Notes). That RSpec file is deprecated, and
+removed after draft v0.5.
 
-The remaining files are by topic, somewhat overlapping with 
-I<00ImplementationNotes>, and with each other on common topics. These
+Instead, each code snippet is provided separately, as, for example,
+C<spec --color spec/00ImplNotes_Code09_5-10_spec.rb -f s>.
+
+These may be run in suites through use of the provided Rakefile, using 
+the form C<rake spec:suite:code_9_5>, for example.
+
+The remaining files are by topic, somewhat overlapping with the
+I<00ImplNotes_Code> files, and with each other on common topics. These
 files also contain documentation and tests for various features,
 inconsistencies, nits, and bugs -- most of which are B<not> discussed
-in this document, and are B<not> included in the I<00> file.
+in this document, and are B<not> included in the I<00ImplNotes> files.
 
 =over
 
-=item - 00ImplementationNotes_spec.rb
+=item - 00ImplementationNotes_spec.rb (Deprecated, removed after draft v0.5)
 
-=item - 01helpers_spec.rb
+=item - 00ImplNotes_Codexx_yy-zz_spec.rb
+
+=item - 01helpers_spec.rb (a focus on the new, aliased, or changed helpers)
 
 =item - 02initialwspc_spec.rb
 
 =item - 03nesting_spec.rb
 
-=item - 04preserve_spec.rb
+=item - 04preserve_spec.rb (see 05preformatted for more, and comparisons)
 
-=item - 05preformatted_spec.rb
+=item - 05preformatted_spec.rb (w/ comparisons of tag and ContentBlock combos)
 
 =item - 06mixedcontent_spec.rb
 
@@ -3077,6 +3381,3 @@ in this document, and are B<not> included in the I<00> file.
 =item - 14doctype_spec.rb
 
 =back
-
-=cut
-

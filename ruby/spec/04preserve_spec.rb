@@ -1,21 +1,14 @@
 #04preserve_spec.rb
 #./text-haml/ruby/spec/
-#Calling: spec --color 04preserve_spec.rb -f s
+#Calling: spec --color spec/04preserve_spec.rb -f s
 #Authors:
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "   variable2  \n  twolines   "
-
-def expr1(arg = "expr1arg" )
-  "__" + arg + "__"
-end
+require "./HamlRender"
 
 #Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
 #Notice: Trailing whitespace is present on some Textlines
@@ -113,7 +106,7 @@ HTML
   end
 end
 #Notice: funct() is indented +1 than OutputIndentStep, and all other
-# lines are indented from that same BLM.
+# lines are indented from that same BOD.
 
 
 #================================================================
@@ -134,7 +127,7 @@ HTML
     end
   end
 end
-#bug-let nit: preserve leading whitespace from expr or interpol.
+#bug-let nit: preserve leading whitespace from expr or interpolation
 
 
 #================================================================
@@ -154,7 +147,8 @@ HAML
       wspc.html.should == <<HTML
 <laugh>
   <cry>
-    <cope> inline expr code()  \n           nested code:
+    <cope> inline expr code()  
+           nested code:
     </cope>
   </cry>
 </laugh>
@@ -335,8 +329,8 @@ HAML
       wspc.html.should == <<HTML
 <eggs>
   <code>
-    proc()
-    moreproc()
+    proc()  
+    moreproc()  
   </code>
 </eggs>
 <spam>
@@ -520,7 +514,10 @@ HAML
 <tutu>
   <p>para1</p>
   <code>  Foo  &#x000A;  Bar  &#x000A;</code>
-  <cope>\n      Foo  \n      Bar\n  </cope>
+  <cope>
+      Foo  
+      Bar  
+  </cope>
 </tutu>
 HTML
     end
@@ -542,4 +539,3 @@ end
 #Note that the OutputIndent for the second line in the non-preserve
 #  case is the result of the html_indent, whatever its then-current 
 #  value, plus the content author's extra spacing in the interpolated var. 
-

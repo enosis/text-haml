@@ -1,17 +1,14 @@
 #03nesting_spec.rb
 #./text-haml/t/branch_wspc
-#Calling: spec --color 03nesting_spec.rb -f s
+#Calling: spec --color spec/03nesting_spec.rb -f s
 #Authors:
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "   variable2  \n  twolines   "
+require "./HamlRender"
 
 def expr1(arg = "expr1arg" )
   "__" + arg + "__"
@@ -19,6 +16,7 @@ end
 
 #Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
 #Notice: Trailing whitespace is present on some Textlines
+
 
 #================================================================
 describe HamlRender, "-01- Nested Content:" do
@@ -311,9 +309,3 @@ end
 # =expr is on Nested Line, therefore not run tight
 # the Haml comment "-# evil indent", when removed, gives two Whitelines
 #   which are collapsed into one whiteline in HtmlOutput
-
-
-
-
-
-

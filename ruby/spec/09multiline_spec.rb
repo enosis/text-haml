@@ -1,21 +1,14 @@
 #09multiline_spec.rb
 #./text-haml/ruby/spec/
-#Calling: spec --color 09multiline_spec.rb -f s
+#Calling: spec --color spec/09multiline_spec.rb -f s
 #Authors:
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "   variable2  \n  twolines   "
-
-def expr1(arg = "expr1arg" )
-  "__" + arg + "__"
-end
+require "./HamlRender"
 
 #Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
 #Notice: Trailing whitespace is present on some Textlines

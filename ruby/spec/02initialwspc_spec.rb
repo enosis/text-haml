@@ -1,17 +1,14 @@
 #02initialwspc_spec.rb
 #./text-haml/ruby/spec/
-#Calling: spec --color 02initialwspc_spec.rb -f s
+#Calling: spec --color spec/02initialwspc_spec.rb -f s
 #Authors:
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "variable2  \ntwolines   "
+require "./HamlRender"
 
 def expr1(arg = "expr1arg" )
   "__" + arg + "__"
@@ -116,16 +113,26 @@ describe HamlRender, "-03- Initial Whitespace:" do
 %p= foo
 %p= bar
 %p= html_indent.length
+- baz = html_tabstring('..')
+%dir
+  %p
+    Nested text
 HAML
       wspc.html.should == <<HTML
 <p>1</p>
 <p>  </p>
 <p>2</p>
+<dir>
+..<p>
+....Nested text
+..</p>
+</dir>
 HTML
     end
   end
 end
 #WSE proposed operators (see also tab_up, tab_down, with_tabs)
+# html_tabstring is get/set
 #The then-current count of "tabs" used for the OutputIndent
 #The html_tabstring is the OutputIndentStep, typically = 2 spaces
 # html_tabstring * html_tabs = OutputIndent
@@ -212,10 +219,10 @@ HAML
 <div class='txt1'>
   <p>para1</p>
   <p id='prfmttd' class='wspcpre'>
- This
-     is a fish
-  of some kind
-   never before seen here
+     This
+         is a fish
+      of some kind
+        never before seen here
   </p>
   <code>
  This
@@ -224,12 +231,7 @@ HAML
    never before seen here
   </code>
   <p>
-    <code>
- This
-    is a fish
-  of some kind
-   never before seen here
-  </code>
+    <code> This&#x000A    is a fish&#x000A  of some kind&#x000A;   never before seen here</code>
   </p>
 </div>
 HTML
@@ -238,8 +240,8 @@ HTML
 end
 #WSE Haml: 
 #Notice: %code is now option:preformatted
-#Notice: Of course that <p id='prfmttd'> element won't render 
-# 'preformatted' unless the author provides the appropriate CSS. 
+#Notice: Of course that <p id='prfmttd'> element won't render in the
+# UA as 'preformatted' unless the author provides the appropriate CSS.
 #See the RSpec for preformatted
 
 
@@ -421,7 +423,7 @@ end
 #================================================================
 describe HamlRender, "-10- Initial Whitespace:" do
   it "Inline expression with newline in local var" do
-    #pending "WSE" do
+    pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
@@ -440,8 +442,7 @@ HAML
   </p>
 </spike>
 HTML
-    #end
+    end
   end
 end
-
 

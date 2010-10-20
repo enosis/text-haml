@@ -1,21 +1,14 @@
 #01helpers_spec.rb
 #./text-haml/ruby/spec/
-#Calling: spec --color 01helpers_spec.rb -f s
+#Calling: spec --color spec/01helpers_spec.rb -f s
 #Authors: 
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "variable2  \ntwolines   "
-
-def expr1(arg = "expr1arg" )
-  "__" + arg + "__"
-end
+require "./HamlRender"
 
 #Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
 #Notice: Trailing whitespace is present on some Textlines
@@ -26,7 +19,7 @@ describe HamlRender, "-01- Helpers:" do
   it "html_indent -- WSE alias for haml_indent" do
     pending "WSE" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => false, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }
@@ -44,7 +37,8 @@ HAML
 <p></p>
 <p>abc  def</p>
 <code>  </code>
-<ver>  </ver>
+<ver>  
+</ver>
 <p>2</p>
 <p>uvw  xyx</p>
 HTML
@@ -57,7 +51,8 @@ end
 # - For a non-preserve/non-preformatted tag, the whitespace-only tag in HamlSource
 #   is generated as an empty Html element in the HtmlSource
 # - For a whitespace-only preserve/preformatted tag, the whitespace is replayed in
-#   the HtmlSource
+#   the HtmlSource. Preserve tags are rendered horizontally; preformatted tags
+#   are rendered vertically. An Inline fragment is rendered following the start tag
 
 
 #================================================================
@@ -256,11 +251,13 @@ HTML
 end
 #WSE proposed function
 #The number of OutputIndentSteps for next indented line
+# (aka: haml_buffer.tabulation)
+# html_tabstring * html_tabs => html_indent (OutputIndent)
 
 
 #================================================================
 describe HamlRender, "-07- Helpers:" do
-  it "html_tabstring -- WSE proposed function" do
+  it "html_tabstring -- WSE proposed get/set function" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => true, 
@@ -269,16 +266,37 @@ describe HamlRender, "-07- Helpers:" do
                  :oir => 'strict' }
       wspc.render_haml( <<'HAML', h_opts )
 %p= html_tabstring
+- html_tabstring('..')
+%p= html_tabstring
+%p
+  %div#id1
+    %p cblock1
+    %div#a
+      %p cblock2
 HAML
       wspc.html.should == <<HTML
 <p>  </p>
+<p>..</p>
+<p>
+..<div id='#id1'>
+....<p>cblock2</p>
+....<div id='a'>
+......<p>cblock2</p>
+....</div>
+..</div>
+</p>
 HTML
     end
   end
 end
 #WSE proposed function
 #The string used for a single OutputIndentStep. Default: "  "
-# html_tabstring * html_tab = OutputIndent
+# (aka: '  ' constant buried in helpers.rb "haml_indent")
+#
+# html_tabstring * html_tabs => html_indent (OutputIndent)
+# (html_tabs: aka: haml_buffer.tabulation)
+#
+#Setter: sets the html_tabstring
 
 
 #================================================================

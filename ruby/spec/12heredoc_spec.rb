@@ -1,21 +1,14 @@
 #12heredoc_spec.rb
 #./text-haml/ruby/spec/
-#Calling: spec --color 12heredoc_spec.rb -f s
+#Calling: spec --color spec/12heredoc_spec.rb -f s
 #Authors:
-# enosis@github.com Nick Ragouzis - Last: Sept2010
+# enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
-# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.2, 12Sept 2010
+# Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-require "HamlRender"
-
-var1 = "variable1"
-var2 = "   variable2  \n  twolines   "
-
-def expr1(arg = "expr1arg" )
-  "__" + arg + "__"
-end
+require "./HamlRender"
 
 #Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
 #Notice: Trailing whitespace is present on some Textlines
@@ -41,7 +34,7 @@ HAML
 <foo>
   <bar>
     <p>
-  HereDoc Para
+      HereDoc Para
     </p>
   </bar>
 </foo>
@@ -71,7 +64,7 @@ HAML
 <foo>
   <bar>
     <p>
-  HereDoc Para
+      HereDoc Para
     </p>
   </bar>
 </foo>
@@ -101,7 +94,7 @@ HAML
 <baz>
   <qux>
     <p a='b'>
-  HereDoc Para
+      HereDoc Para
     </p>
   </qux>
 </baz>
@@ -131,7 +124,7 @@ HAML
 <baz>
   <qux>
     <p a='b'>
-  HereDoc Para
+      HereDoc Para
     </p>
   </qux>
 </baz>
@@ -162,7 +155,7 @@ HAML
 <baz>
   <qux>
     <p a='b' y='z'>
-  HereDoc Para
+      HereDoc Para
     </p>
   </qux>
 </baz>
@@ -192,7 +185,7 @@ HAML
 <toto>
   <tutu>
     <span class='red'>
-  HereDoc Para
+      HereDoc Para
     </span>.
   </tutu>
 </toto>
@@ -225,7 +218,7 @@ HAML
   <tutu>
     *
     <span class='ital'>
-    HereDoc Para
+      HereDoc Para
     </span> *
   </tutu>
 </toto>
@@ -257,7 +250,7 @@ HAML
 <toto>
   <tutu>
     <span>
-    HereDoc Para
+      HereDoc Para
     </span>...
   </tutu>
 </toto>
@@ -291,7 +284,7 @@ HAML
 <zot>
   <zap>
     <p>HereDoc Para
-  Two Lines</p>
+      Two Lines</p>
     <p>last para</p>
   </zap>
 </zot>
@@ -322,7 +315,7 @@ HAML
 <zot>
   <zap>
     <p>para1</p><p>
-  HereDoc Para
+      HereDoc Para
     </p>
   </zap>
 </zot>
@@ -386,10 +379,10 @@ HAML
   <zork>
     <p>para1</p>
     <p>
-  HereDoc
-     variable2  
-  twolines   
-  Final
+      HereDoc
+        variable2  
+        twolines   
+      Final
     </p>
   </zork>
 </frob>
