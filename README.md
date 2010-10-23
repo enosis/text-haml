@@ -6,6 +6,8 @@
 This is a draft document, at v0.5, 20 October 2010.
 See the bottom for plans, contributions, and TODO.
 
+To dive right in: [Haml Whitespace Semantics Extension Implementation Notes](http://github.com/enosis/text-haml/blob/wip-wse/doc/Haml_WhitespaceSemanticsExtension_ImplementationNotes.md)
+
 Proposer: Nick Ragouzis, Enosis Group
 
 Contributors:
@@ -27,7 +29,7 @@ expressly dedicated to production clean and simple XHTML,
 the cruft involved in producing a variety of ordinary XHTML.
 
 Apart from personal experience, one trigger for this effort
-was Issue #28, September 2009, filed by nex3, Nathan Weizenbaum
+was [Issue #28, September 2009, filed by nex3, Nathan Weizenbaum](nex3/haml#28)
 (the current maintainer of the Ruby implementation), entitled
 _Allow variable indentation under certain circumstances_.
 Nathan suggested that instead of the current source-wide
@@ -41,8 +43,9 @@ supported under a slightly looser regime, for example:
             boom
 
 Such a change would be a richer realization of the Offside Rule
-and advance Haml's realization of a physical ISWIM language, as
-defined by Landin in 1966. Such a change would probably also
+and advance Haml's realization of a [physical ISWIM language, as
+defined by Landin in 1966](http://doi.acm.org/10.1145/365230.365257). 
+Such a change would probably also
 prompt a smile from many a Haml author.
 
 The WSE Haml proposals are detailed in the enclosed Implementation
@@ -205,19 +208,19 @@ This is a draft proposal, in the process of being corrected and refined.
 
 *   Haml Whitespace Semantics Extension (WSE) Implementation Notes
     (in Markdown and Pod)
-*   An RSpec file, 00ImplementationNotes_spec.rb, of all of the code
+*   An RSpec file, [00ImplementationNotes_spec.rb](http://github.com/enosis/text-haml/blob/wip-wse/ruby/spec/00ImplementationNotes_spec.rb), of all of the code
     snippets from the Implementation Notes document. Deprecated;
     will be removed after draft v0.5.
 *   A collection of RSpec files, one for each code snippet from the
     Implementation Notes document (initially: 61 files).
 *   A collection of RSpec files by major extension topic
     (initially: 14 files).
-*   A Rakefile with suites to allow you to run the entire suite of
+*   A [Rakefile](http://github.com/enosis/text-haml/blob/wip-wse/ruby/Rakefile) with suites to allow you to run the entire suite of
     code in the Implementation Notes document, and by each major
     topic section.
 *   A parallel collection of Test::More files, for running against
     vti's Text::Haml.
-*   A parallel Makefile
+*   A parallel [Makefile](http://github.com/enosis/text-haml/blob/wip-wse/t/wse/Makefile).
 
 Why such a big load of stuff? Well, one of us (Ragouzis) started
 just implementing the various extensions, piecewise. But then ...
@@ -291,9 +294,9 @@ needn't repeat yourself in all the appearances.
 
 ### Relationship to Other Work
 
-*   Github nex3/haml: Foundation and inspiration
+*   Github [nex3/haml](http://github.com/nex3/haml): Foundation and inspiration
 
-*   Github vti/text-haml: Implementation target
+*   Github [vti/text-haml](http://github.com/vti/text-haml): Implementation target
 
-*   Github norman/haml-spec: Additional test suite
+*   Github [norman/haml-spec](http://github.com/norman/haml-spec): Additional test suite
 
