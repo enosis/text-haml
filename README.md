@@ -29,7 +29,7 @@ expressly dedicated to production clean and simple XHTML,
 the cruft involved in producing a variety of ordinary XHTML.
 
 Apart from personal experience, one trigger for this effort
-was [Issue #28, September 2009, filed by nex3, Nathan Weizenbaum](nex3/haml#28)
+was [Issue #28, September 2009, filed by nex3, Nathan Weizenbaum](http://github.com/nex3/haml/issues#issue/28)
 (the current maintainer of the Ruby implementation), entitled
 _Allow variable indentation under certain circumstances_.
 Nathan suggested that instead of the current source-wide

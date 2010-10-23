@@ -121,7 +121,7 @@ code_9:
 	@$(runtests) 00ImplNotes_Code09_*.t
 
 code_9_2:
-	@echo "Haml Comment:
+	@echo "Haml Comment"
 	@$(runtests) 00ImplNotes_Code09_02-*.t
 
 code_9_3:
