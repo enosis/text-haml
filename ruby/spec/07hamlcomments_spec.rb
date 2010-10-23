@@ -184,7 +184,7 @@ HAML
       wspc.html.should == <<HTML
 <bongo>
   <p>para1</p>
-  <div></div>
+  <div id='id1'></div>
   <p>para2</p>
 </bongo>
 HTML

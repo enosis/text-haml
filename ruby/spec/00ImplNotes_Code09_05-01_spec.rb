@@ -23,13 +23,13 @@ describe HamlRender, "ImplNotes Code 9.5-01 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts, 'var1' => 'variable1' )
 %body
   %dir
     %dir
-      %p<<DOC
+      %vtag<<DOC
      HereDoc
 -# #{var1}
 DOC
@@ -38,10 +38,10 @@ HAML
 <body>
   <dir>
     <dir>
-      <p>
+      <vtag>
      HereDoc 
 -# variable1
-      </p>
+      </vtag>
     </dir>
   </dir>
 </body>

@@ -23,13 +23,13 @@ describe HamlRender, "ImplNotes Code 9.5-05 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %body
   %dir
     %dir
-      %p#n1<<-DOC
+      %vtag#n1<<-DOC
      HereDoc Para
      DOC
         %p#n2 para2
@@ -38,9 +38,9 @@ HAML
 <body>
   <dir>
     <dir>
-      <p id='n1'>
+      <vtag id='n1'>
      HereDoc Para
-      </p>
+      </vtag>
       <p id='n2'>para2</p>
     </dir>
   </dir>
@@ -49,8 +49,8 @@ HTML
     end
   end
 end
-#WSE Haml: tag "%p#n2" must be a sibling to "%p#n1" because
+#WSE Haml: tag "%p#n2" must be a sibling to "%vtag#n1" because
 #  the latter's tag contentblock is already closed ...  so
 #  "%p#n2" cannot append to that tree. Provided it satisfies
 #  the applicable OIR, then "%p#n2" must be a sibling.
-#  The reference is the "%p#n1" Head, not the "DOC" delimiter.
+#  The reference is the "%vtag#n1" Head, not the "DOC" delimiter.

@@ -80,7 +80,7 @@ end
 
 #================================================================
 describe HamlRender, "-04- Preserve:" do
-  it "%code Inline Content (plaintext) - initial whitespace preserved" do
+  it "%atag plus :preserve - leading whitespace preserved" do
     #pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -105,8 +105,8 @@ HTML
     #end
   end
 end
-#Notice: funct() is indented +1 than OutputIndentStep, and all other
-# lines are indented from that same BOD.
+#Notice: funct() is indented +1 than OutputIndentStep,
+# and all other lines are indented from that same BOD.
 
 
 #================================================================
@@ -114,7 +114,7 @@ describe HamlRender, "-05- Preserve:" do
   it "%code Inline Content (dynamic) - initial and interior whitespace preserved" do
     pending "WSE" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => true, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }
@@ -132,10 +132,10 @@ end
 
 #================================================================
 describe HamlRender, "-06- Preserve:" do
-  it "%cope (non-preserve) Inline Content (dynamic) - interior whitespace - =expr" do
+  it "%cope (non-preserve) Inline Content (dynamic) - leading whitespace - =expr" do
     pending "WSE" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => true, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }
@@ -215,7 +215,7 @@ HAML
 <zot>
   Foo\n  <pre>Bar&#x000A;Baz</pre>
   Foo\n  %Bar\n  Baz
-  Foo\n  <xre>Bar\n    Baz\n  </xre>
+  Foo\n  <xre>Bar\n  Baz\n  </xre>
 </zot>
 HTML
     end
@@ -242,7 +242,7 @@ HAML
 <zot>
   Foo\n  <pre>Bar&#x000A;Baz\n</pre>
   Foo\n  %Bar\n  Baz
-  Foo\n  <xre>Bar\n    Baz\n</xre>
+  Foo\n  <xre>Bar\n  Baz\n</xre>
 </zot>
 HTML
     end

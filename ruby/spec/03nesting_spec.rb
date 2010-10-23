@@ -110,7 +110,7 @@ HTML
   end
 end
 #Under OIR:loose, variable nesting (random Undent) is permitted,
-#  as long as the undents remain 'onside' the BlockLeftMargin 
+#  as long as the undents remain 'onside' the BlockOnsideDemarcation 
 #See below for case where Textline "Nested Para Text1" is Haml tag
 
 

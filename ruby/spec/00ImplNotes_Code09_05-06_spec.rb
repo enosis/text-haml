@@ -23,13 +23,13 @@ describe HamlRender, "ImplNotes Code 9.5-06 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %body
   %dir
     %dir#d1
-      %p#n1<<-DOC
+      %vtag#n1<<-DOC
      HereDoc Para
   DOC
     %p#n2 para2
@@ -38,9 +38,9 @@ HAML
 <body>
   <dir>
     <dir id='d1'>
-      <p id='n1'>
+      <vtag id='n1'>
      HereDoc Para
-      </p>
+      </vtag>
     </dir>
     <p id='n2'>para2</p>
   </dir>
@@ -50,4 +50,4 @@ HTML
   end
 end
 #WSE Haml: tag "%p#n2" is a sibling to "%dir#d1"
-#  The reference is the "%p#n1" Head, not the "DOC" delimiter.
+#  The reference is the "%vtag#n1" Head, not the "DOC" delimiter.

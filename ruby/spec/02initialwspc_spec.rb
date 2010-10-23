@@ -195,7 +195,7 @@ describe HamlRender, "-05- Initial Whitespace:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver', 'code'],
+                 :preformatted => ['ver', 'vtag'],
                  :oir => 'strict' }
       wspc.render_haml( <<'HAML', h_opts )
 .txt1
@@ -206,14 +206,14 @@ describe HamlRender, "-05- Initial Whitespace:" do
            is a fish
         of some kind
          never before seen here
-  %code
+  %vtag
     :preformatted
        This
            is a fish
         of some kind
          never before seen here
   %p
-    %code= " This\n    is a fish\n of some kind\n  never before seen here"
+    %vtag= " This\n    is a fish\n of some kind\n  never before seen here"
 HAML
       wspc.html.should == <<HTML
 <div class='txt1'>
@@ -224,14 +224,14 @@ HAML
       of some kind
         never before seen here
   </p>
-  <code>
+  <vtag>
  This
      is a fish
   of some kind
    never before seen here
-  </code>
+  </vtag>
   <p>
-    <code> This&#x000A    is a fish&#x000A  of some kind&#x000A;   never before seen here</code>
+    <vtag> This&#x000A    is a fish&#x000A  of some kind&#x000A;   never before seen here</vtag>
   </p>
 </div>
 HTML
@@ -239,7 +239,7 @@ HTML
   end
 end
 #WSE Haml: 
-#Notice: %code is now option:preformatted
+#Notice: %vtag is option:preformatted (similar to 'pre')
 #Notice: Of course that <p id='prfmttd'> element won't render in the
 # UA as 'preformatted' unless the author provides the appropriate CSS.
 #See the RSpec for preformatted

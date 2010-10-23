@@ -127,8 +127,8 @@ end
 #This seems buggy, or at least inconsistent. But what treatment? Would seem,
 #either, CONSOLIDATE all/both to single spaces (seems most appropriate, and
 #this is indeed what WSE Haml specifies) or normalize them back to the 
-#"effective" BLM (the left-most margin in the text, since Multiline 
-#enforces NEITHER Offside/BLM, or OIR).
+#"effective" BOD (the left-most margin in the text, since Multiline
+#enforces NEITHER Offside/BOD, or OIR).
 #
 #Legacy Bug: Compare drop of trailing space after "Fourth line" with add of 
 #trailing space in the bug above. 

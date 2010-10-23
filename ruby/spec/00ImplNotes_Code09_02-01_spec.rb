@@ -3,14 +3,14 @@
 #Calling: rake spec:suite:code_9_2
 #         spec --color spec/00ImplNotes_Code09_02-01_spec.rb -f s
 #
-#Authors: 
+#Authors:
 # enosis@github.com Nick Ragouzis - Last: Oct2010
 #
 #Correspondence:
 # Haml_WhitespaceSemanticsExtension_ImplmentationNotes v0.5, 20101020
 #
 
-#Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default 
+#Notice: With Whitespace Semantics Extension (WSE), OIR:loose is the default
 #Notice: Trailing whitespace is present on some Textlines
 
 require './HamlRender'
@@ -21,7 +21,7 @@ describe HamlRender, "ImplNotes Code 9.2-01 -- Heads:HamlComment:" do
   it "Lexeme BOD" do
     pending "WSE" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => false, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }

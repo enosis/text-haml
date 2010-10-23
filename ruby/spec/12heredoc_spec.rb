@@ -34,7 +34,7 @@ HAML
 <foo>
   <bar>
     <p>
-      HereDoc Para
+        HereDoc Para
     </p>
   </bar>
 </foo>
@@ -42,6 +42,7 @@ HTML
     end
   end
 end
+#Notice: With %atag + HereDoc: The Leading Whitespace is perserved
 
 
 #================================================================
@@ -64,7 +65,7 @@ HAML
 <foo>
   <bar>
     <p>
-      HereDoc Para
+        HereDoc Para
     </p>
   </bar>
 </foo>
@@ -72,7 +73,7 @@ HTML
     end
   end
 end
-
+#Notice: With %atag + HereDoc: The Leading Whitespace is preserved
 
 #================================================================
 describe HamlRender, "-03- HereDoc" do
@@ -283,7 +284,7 @@ HAML
       wspc.html.should == <<HTML
 <zot>
   <zap>
-    <p>HereDoc Para
+    <p>  HereDoc Para
       Two Lines</p>
     <p>last para</p>
   </zap>
@@ -315,7 +316,7 @@ HAML
 <zot>
   <zap>
     <p>para1</p><p>
-      HereDoc Para
+        HereDoc Para
     </p>
   </zap>
 </zot>
@@ -345,9 +346,9 @@ HAML
       wspc.html.should == <<HTML
 <p>para1</p>
 <p>
-  HereDoc 
-  -# hamlcomment
-  Para
+    HereDoc
+    -# hamlcomment
+    Para
 </p>
 HTML
     end
@@ -379,10 +380,10 @@ HAML
   <zork>
     <p>para1</p>
     <p>
-      HereDoc
-        variable2  
-        twolines   
-      Final
+        HereDoc
+          variable2  
+          twolines   
+        Final
     </p>
   </zork>
 </frob>

@@ -30,15 +30,15 @@ describe HamlRender, "ImplNotes Code 9.5-11 -- Heads:HereDoc:" do
   %dir
     %dir
       %span <<-DOC#{punct}
-HereDoc Para
-               DOC
+    HereDoc Para
+    DOC
 HAML
       wspc.html.should == <<'HTML'
 <body>
   <dir>
     <dir>
       <span>
-HereDoc Para
+        HereDoc Para
       </span>...
     </dir>
   </dir>

@@ -362,7 +362,7 @@ HTML
   end
 end
 #WSE: default for Html Comments is OIR:loose, allowing any indent
-# provided BlockLeftMargin is observed (Offside Rule)
+# provided BlockOnsideDemarcation is observed (Offside Rule)
 
 
 #================================================================

@@ -30,15 +30,15 @@ describe HamlRender, "ImplNotes Code 9.5-10 -- Heads:HereDoc:" do
   %dir
     %p *
       %span.ital<<-DOC *
-                 HereDoc Para 
-           DOC
+            HereDoc Para
+            DOC
 HAML
       wspc.html.should == <<'HTML'
 <body>
   <dir>
     <p>*
       <span class='ital'>
-                 HereDoc Para 
+        HereDoc Para
       </span> *
     </p>
   </dir>

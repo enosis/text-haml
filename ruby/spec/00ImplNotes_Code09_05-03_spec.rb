@@ -29,8 +29,8 @@ describe HamlRender, "ImplNotes Code 9.5-03 -- Heads:HereDoc:" do
 %body
   %dir
     %dir
-      %p{ :a => 'b',
-          :y => 'z' }<<-DOC
+      %vtag{ :a => 'b',
+             :y => 'z' }<<-DOC
      HereDoc Para
      DOC
 HAML
@@ -38,9 +38,9 @@ HAML
 <body>
   <dir>
     <dir>
-      <p a='b' y='z'>
+      <vtag a='b' y='z'>
      HereDoc Para
-      </p>
+      </vtag>
     </dir>
   </dir>
 </body>

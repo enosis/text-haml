@@ -23,22 +23,22 @@ describe HamlRender, "ImplNotes Code 9.5-04 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %body
   %dir
     %dir
-      %p><<-DOC
+      %vtag><<-DOC
      HereDoc Para
      DOC
 HAML
       wspc.html.should == <<'HTML'
 <body>
   <dir>
-    <dir><p>
+    <dir><vtag>
      HereDoc Para
-    </p></dir>
+    </vtag></dir>
   </dir>
 </body>
 HTML

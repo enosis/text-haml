@@ -14,14 +14,21 @@ A suite of specifications and tests accompany this text.
 
 In an earlier draft, file _OOImplementationNotes_, contained all the code,
 in sequence (with the associated major head identified), as found in this
-document (WSE Implementation Notes). That RSpec file is deprecated, and
-although provided with v0.5; it is slated to be removed after draft v0.5.
+document (WSE Implementation Notes). That file was created as a Ruby RSpec
+file provided through draft v0.5; it is slated to be removed after draft v0.5.
+The parallel Test::More file was not created.
 
 Instead, each code snippet is provided separately, as, for
 example, `spec --color spec/00ImplNotes_Code09_5-10_spec.rb -f s`.
 
 These may be run in suites through use of the provided Rakefile, using
-the form `rake spec:suite:code_9_5`, for example. See the Rakefile.
+the form `rake spec:suite:code_9_5`, for example. You may run the entire
+RSpec 00ImplNotes_code suite using `rake spec:implnotes`. See the Rakefile.
+
+A Test::More collection is also provided. For example:
+C<perl t/wse/00ImplNotes_Code09_05_10.t>. These may be run in suites,
+for example: C<make code_9_5>. You may run the entire 00ImplNotes_Code 
+suite with `make implnotes`. Read t/wse/Makefile.
 
 The files numbered from __01__ to __14__ are by topic, contain specifications
 and demonstrations of WSE Haml extensions, and a few of the bugs in
@@ -628,7 +635,7 @@ consequential operational model, consider Haml Comments (apart from their
 role as Processing Instruction). Starting at the bottom of the hierarchy, 
 Haml Comments are transparent in Content. Moving upwards, Haml Comments are 
 neither macro, expression or transform. Haml Comments are, in WSE, meta 
-contructs -- they are one of the few Haml tags that describe the semantic 
+constructs -- they are one of the few Haml tags that describe the semantic 
 nature of their accompanying ContentBlock. The semantic for 
 Haml Comments: "ignore, entirely, me and my ContentBlock."
 
@@ -1075,7 +1082,7 @@ first time. Refer to descriptions later in this document.
       ----
       Observe Offside: Is the extent of the Content Model of the specified 
           ContentBlock sensitive to the BOD and Offside Undents? An Inline-only
-          Content Model is by definition Offside sensitive (plaintext TextLine, 
+          Content Model is by definition Offside sensitive (plaintext Textline, 
           etc.); A Content Model whose extent is insensitive to the BOD and
           Offside Undents will require something other than these effects to 
           terminate the ContentBlock (e.g., Multiline: the absence of the infix 
@@ -1234,7 +1241,7 @@ _Interior_, and _Trailing_.
     applicable to the filter's Head itself (between the :preserve, and its
     parent's Head, say '%code'). Because in WSE Haml a filter sets the BOD for
     its ContentBlock at an offset equal to the IndentStep applicable to the
-    filter's Head itself, a simplier formulation is that any whitespace at and
+    filter's Head itself, a simpler formulation is that any whitespace at and
     to the right of the ContentBlock's BOD is considered Leading Whitespace,
     which these two filters replay.
 
@@ -1334,7 +1341,7 @@ introduced by dynamic variables). Neither F:preserve, F:preformatted,
 nor HereDoc will operate on other contained Haml (i.e., `%atag` is
 replayed as the string _%atag_).
 
-Language Contructs and ContentBlock Support
+Language Constructs and ContentBlock Support
 
       ================================================================================
       ContentBlock
@@ -1352,7 +1359,7 @@ Language Contructs and ContentBlock Support
       + atag semantics, essentially
 
 
-Language Constructs and Newline Treatement
+Language Constructs and Newline Treatment
 
       ================================================================================
       Newline Treatment
@@ -1364,10 +1371,10 @@ Language Constructs and Newline Treatement
       Tilde *                   ptag ^         vtag ^
                                 H:preserve     HereDoc
 
-      * FAP and Tilde perform their rencoding of \n-to-&#x000A; on every
+      * FAP and Tilde perform their reencoding of \n-to-&#x000A; on every
         \n interior to a <ptag>, ignoring any contained or containing <vtag>.
       ^ A %ptag will transform all of its inline \n, even if a nested
-        descendent of a %vtag.  A %ptag with a Nested Content ContentBlock
+        descendant of a %vtag.  A %ptag with a Nested Content ContentBlock
         adheres to %atag semantics; a %ptag with a HereDoc ContentBlock
         processed that ContentBlock as if inline, using %ptag semantics.
 
@@ -1444,7 +1451,7 @@ Preformatted-type Language Constructs and HtmlOutput
            the ContentBlock's BOD or to the right, before text, is Leading
            Whitespace, which these two Filters replay.
        * Tag placement + Vertical: Symmetrically aligned at the same indentation,
-           with the content block rendered on interviening lines
+           with the content block rendered on intervening lines
        * HtmlOutput Align + OutputIndent: The count of IndentSteps determines the
            count of OutputIndentSteps. For atag and ptag with direct input: the
            combination of "IndentStep" and "OutputIndent" means plaintext is
@@ -1452,14 +1459,18 @@ Preformatted-type Language Constructs and HtmlOutput
            by OutputIndents.
 
       Rendering Variations:
-       * These cases produce unique renderings: Case 03 (vtag, direct),
-         Case 05 (ptag, preserve), Case 09 (vtag, preformatted),
-         Case 11 (ptag, HereDoc), and Case 12 (vtag, HereDoc)
+       * These cases produce unique renderings:
+           Case 03 (vtag, direct)
+           Case 05 (ptag, preserve)
+           Case 07 (atag, preformatted)
+           Case 09 (vtag, preformatted)
+           Case 10 (atag, Heredoc)
+           Case 11 (ptag, HereDoc)
+           Case 12 (vtag, HereDoc)
        * Case 01 (atag, direct) and Case 02 (ptag, direct) have the same
          HtmlOutput indentation and newline rendering (with different tags)
        * Case 06 (vtag, preserve), and Case 08 (ptag, preformatted) render
          identical; Case 04 (atag, preserve) differs in indentation, only.
-       * Case 07 (atag ,preformatted) and Case 10 (atag, HereDoc) render identical
 
 Using these tables we can use a pairwise comparison to summarize the
 benefits an author might seek in the related WSE Haml extensions. The
@@ -1745,7 +1756,7 @@ addition to that must be provided through expression or interpolation.
       %code= strvar
       %cope= strvar               # Arbitrary tag
 
-      <code>   foo&#x000A;     bar  \n</code>
+      <code>   foo&#x000A;     bar  &#x000A;</code>
       <cope>   foo                 # Not :preserve tag (Code 8.8-04, -06))
         bar                        # WSE Haml, Notice: only 1 OutputIndentStep
       </cope>
@@ -1892,7 +1903,7 @@ the Indentation of the Haml Comment lexeme, plus 1:
           globally using a 3-space IndentStep.) 
    
 
-In consequence, for TextLines in Haml Comments the indentation
+In consequence, for Textlines in Haml Comments the indentation
 may increase and decrease arbitrarily ... provided they stay 'onside.'
 This offers more flexibility for commenting out code without changing
 it's indentation, making it easy to re-activate such code.
@@ -2158,10 +2169,12 @@ string).
 
       Code 9.5-01
 
+      option:preformatted => ['vtag']       # Verbatim
+
       %body
         %dir
           %dir
-            %p<<DOC
+            %vtag<<DOC
            HereDoc
       -# #{var1}
       DOC
@@ -2169,10 +2182,10 @@ string).
       <body>
         <dir>
           <dir>
-            <p>
+            <vtag>
            HereDoc 
       -# variable1
-            </p>
+            </vtag>
           </dir>
         </dir>
       </body>
@@ -2191,10 +2204,12 @@ delimiter:
 
       Code 9.5-02
 
+      option:preformatted => ['vtag']       # Verbatim
+
       %body
         %dir
           %dir
-            %p<<-DOC
+            %vtag<<-DOC
            HereDoc
       -# #{var1}
             DOC
@@ -2208,9 +2223,11 @@ last:
 
       Code 9.5-03
 
+      option:preformatted => ['vtag']       # Verbatim
+
       %div
-        %p{:a => 'b',
-           :y => 'z'}<<DOC
+        %vtag{ :a => 'b',
+               :y => 'z' }<<DOC
        HereDoc Para
        DOC
 
@@ -2218,8 +2235,10 @@ Here with the trim_out lexeme:
 
       Code 9.5-04
 
+      option:preformatted => ['vtag']       # Verbatim
+
       %div
-        %p><<DOC
+        %vtag><<DOC
        HereDoc Para
        DOC
 
@@ -2231,14 +2250,16 @@ Indentation than the Element's Head). Notice that the relevant
 Indentation is with respect to the Element's Head not the HereDoc 
 Terminator.
 
+As a sibling:
+
       Code 9.5-05
 
-      As a sibling:
+      option:preformatted => ['vtag']       # Verbatim
 
       %body
         %dir
           %dir
-            %p#n1<<-DOC
+            %vtag#n1<<-DOC
            HereDoc Para
            DOC
               %p#n2 para2
@@ -2246,9 +2267,9 @@ Terminator.
       <body>
         <dir>
           <dir>
-            <p id='n1'>
+            <vtag id='n1'>
            HereDoc Para
-            </p>
+            </vtag>
             <p id='n2'>para2</p>
           </dir>
         </dir>
@@ -2260,10 +2281,12 @@ a common ancestor:
 
       Code 9.5-06
 
+      option:preformatted => ['vtag']       # Verbatim
+
       %body
         %dir
           %dir#d1
-            %p#n1<<-DOC
+            %vtag#n1<<-DOC
            HereDoc Para
         DOC
           %p#n2 para2
@@ -2271,9 +2294,9 @@ a common ancestor:
       <body>
         <dir>
           <dir id='d1'>
-            <p id='n1'>
+            <vtag id='n1'>
            HereDoc Para
-            </p>
+            </vtag>
           </dir>
           <p id='n2'>para2</p>
         </dir>
@@ -2323,40 +2346,48 @@ TODO: Candidate capability for content following the HereDoc token
 
       Code 9.5-09
 
-      %span.red<<DOC.
+      %dir
+        %span.red<<DOC.
       HereDoc Para
       DOC
 
-      <spam class='red'>
-      HereDoc Para
-      </p>.
+      <dir>
+        <span class='red'>
+          HereDoc Para
+        </span>.
+      </dir>
 
 TODO: Candidate capability for content following the HereDoc token
 
       Code 9.5-10
 
-      *
-      %span.ital<<-DOC *
-                HereDoc Para
-           DOC
+      %p *
+        %span.ital<<-DOC *
+              HereDoc Para
+              DOC
 
-      *
-      <span class='ital'>
-                HereDoc Para
-      </span> *
+      <p>*
+        <span class='ital'>
+          HereDoc Para
+        </span> *
+      </p>
 
 TODO: Candidate capability for content following the HereDoc token
 
       Code 9.5-11
 
       - punct = '...'
-      %span <<DOC#{punct}
+
+      %dir
+        %span <<DOC#{punct}
       HereDoc Para
       DOC
 
-      <span>
-      HereDoc Para
-      </span>...
+      <dir>
+        <span>
+          HereDoc Para
+        </span>...
+      </dir>
 
 
 
@@ -2466,7 +2497,7 @@ of the :preserve head itself.
 While in general, in WSE Haml, a Filter establishes a BOD for its
 ContentBlock, both `filter:preserve` (and `filter:preformatted`) will accept
 a ContentBlock provided it is to the right of the minimum possible BOD,
-at the indentation of the 'p' in ":preserve". Using the forumlation above
+at the indentation of the 'p' in ":preserve". Using the formulation above
 this would produce a negative offset, which is instead forced to 0.
 
 Also, in the above, Trailing Whitespace passed through `filter:preserve`.

@@ -511,6 +511,8 @@ HTML
   end
 end
 #<div>\n  <p>\n    cblock1\n    <span>cblock2</span>\n  </p>\n</div>
+
+
 #================================================================
 describe HamlRender, "ImplNotes Code 8.3-02 -- Elements:" do
   it "Two-line nesting - Legacy Haml" do
@@ -1110,7 +1112,7 @@ HTML
     end
   end
 end
-#WSE Haml: Conolidates the trailing newlines, then transforms
+#WSE Haml: Consolidates the trailing newlines, then transforms
 #Legacy Haml (previous spec Code 8.8-09) -- Drops trailing newlines
 #<div class='quux'>
 #  <code>foo&#x000A;   bar</code>
@@ -1151,14 +1153,14 @@ describe HamlRender, "ImplNotes Code 8.8-12 -- Normalizing:" do
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts, "   foo\n     bar  \n" )
+      wspc.render_haml( <<'HAML', h_opts, :strvar => "   foo\n     bar  \n" )
 .quux
   %code= strvar
   %cope= strvar
 HAML
       wspc.html.should == <<'HTML'
 <div class='quux'>
-  <code>   foo&#x000A;     bar  \n</code>
+  <code>   foo&#x000A;     bar  &#x000A;</code>
   <cope>   foo
     bar  
   </cope>
@@ -1564,13 +1566,13 @@ describe HamlRender, "ImplNotes Code 9.5-01 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts, 'var1' => 'variable1' )
 %body
   %dir
     %dir
-      %p<<DOC
+      %vtag<<DOC
      HereDoc
 -# #{var1}
 DOC
@@ -1579,10 +1581,10 @@ HAML
 <body>
   <dir>
     <dir>
-      <p>
+      <vtag>
      HereDoc 
 -# variable1
-      </p>
+      </vtag>
     </dir>
   </dir>
 </body>
@@ -1599,14 +1601,14 @@ describe HamlRender, "ImplNotes Code 9.5-02 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts, 'var1' => 'variable1' )
 %body
   %dir
     %dir
-      %p<<-DOC
-     HereDoc
+      %vtag<<-DOC
+      HereDoc
 -# #{var1}
       DOC
 HAML
@@ -1614,10 +1616,10 @@ HAML
 <body>
   <dir>
     <dir>
-      <p>
-     HereDoc 
+      <vtag>
+      HereDoc
 -# variable1
-      </p>
+      </vtag>
     </dir>
   </dir>
 </body>
@@ -1635,14 +1637,14 @@ describe HamlRender, "ImplNotes Code 9.5-03 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %body
   %dir
     %dir
-      %p{ :a => 'b',
-          :y => 'z' }<<-DOC
+      %vtag{ :a => 'b',
+             :y => 'z' }<<-DOC
      HereDoc Para
      DOC
 HAML
@@ -1650,9 +1652,9 @@ HAML
 <body>
   <dir>
     <dir>
-      <p a='b' y='z'>
+      <vtag a='b' y='z'>
      HereDoc Para
-      </p>
+      </vtag>
     </dir>
   </dir>
 </body>
@@ -1669,22 +1671,22 @@ describe HamlRender, "ImplNotes Code 9.5-04 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %body
   %dir
     %dir
-      %p><<-DOC
+      %vtag><<-DOC
      HereDoc Para
      DOC
 HAML
       wspc.html.should == <<'HTML'
 <body>
   <dir>
-    <dir><p>
-     HereDoc Para
-    </p></dir>
+    <dir><vtag>
+      HereDoc Para
+    </vtag></dir>
   </dir>
 </body>
 HTML
@@ -1701,13 +1703,13 @@ describe HamlRender, "ImplNotes Code 9.5-05 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %body
   %dir
     %dir
-      %p#n1<<-DOC
+      %vtag#n1<<-DOC
      HereDoc Para
      DOC
         %p#n2 para2
@@ -1716,9 +1718,9 @@ HAML
 <body>
   <dir>
     <dir>
-      <p id='n1'>
+      <vtag id='n1'>
      HereDoc Para
-      </p>
+      </vtag>
       <p id='n2'>para2</p>
     </dir>
   </dir>
@@ -1727,11 +1729,11 @@ HTML
     end
   end
 end
-#WSE Haml: tag "%p#n2" must be a sibling to "%p#n1" because
+#WSE Haml: tag "%p#n2" must be a sibling to "%vtag#n1" because
 #  the latter's tag contentblock is already closed ...  so
 #  "%p#n2" cannot append to that tree. Provided it satisfies
 #  the applicable OIR, then "%p#n2" must be a sibling.
-#  The reference is the "%p#n1" Head, not the "DOC" delimiter.
+#  The reference is the "%vtag#n1" Head, not the "DOC" delimiter.
 
 
 #================================================================
@@ -1741,13 +1743,13 @@ describe HamlRender, "ImplNotes Code 9.5-06 -- Heads:HereDoc:" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
                  :preserve => ['pre', 'textarea', 'code'],
-                 :preformatted => ['ver'],
+                 :preformatted => ['ver', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
 %body
   %dir
     %dir#d1
-      %p#n1<<-DOC
+      %vtag#n1<<-DOC
      HereDoc Para
   DOC
     %p#n2 para2
@@ -1756,9 +1758,9 @@ HAML
 <body>
   <dir>
     <dir id='d1'>
-      <p id='n1'>
+      <vtag id='n1'>
      HereDoc Para
-      </p>
+      </vtag>
     </dir>
     <p id='n2'>para2</p>
   </dir>
@@ -1768,7 +1770,7 @@ HTML
   end
 end
 #WSE Haml: tag "%p#n2" is a sibling to "%dir#d1"
-#  The reference is the "%p#n1" Head, not the "DOC" delimiter.
+#  The reference is the "%vtag#n1" Head, not the "DOC" delimiter.
 
 
 #================================================================
@@ -1829,15 +1831,15 @@ describe HamlRender, "ImplNotes Code 9.5-09 -- Heads:HereDoc:" do
   %dir
     %dir
       %span.red<<-DOC.
-     HereDoc Para
-     DOC
+    HereDoc Para
+    DOC
 HAML
       wspc.html.should == <<'HTML'
 <body>
   <dir>
     <dir>
       <span class='red'>
-     HereDoc Para
+        HereDoc Para
       </span>.
     </dir>
   </dir>
@@ -1863,15 +1865,15 @@ describe HamlRender, "ImplNotes Code 9.5-10 -- Heads:HereDoc:" do
   %dir
     %p *
       %span.ital<<-DOC *
-                 HereDoc Para 
-           DOC
+            HereDoc Para
+            DOC
 HAML
       wspc.html.should == <<'HTML'
 <body>
   <dir>
     <p>*
       <span class='ital'>
-                 HereDoc Para 
+        HereDoc Para
       </span> *
     </p>
   </dir>
@@ -1897,15 +1899,15 @@ describe HamlRender, "ImplNotes Code 9.5-11 -- Heads:HereDoc:" do
   %dir
     %dir
       %span <<-DOC#{punct}
-HereDoc Para
-               DOC
+    HereDoc Para
+    DOC
 HAML
       wspc.html.should == <<'HTML'
 <body>
   <dir>
     <dir>
       <span>
-HereDoc Para
+        HereDoc Para
       </span>...
     </dir>
   </dir>

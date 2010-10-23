@@ -260,7 +260,7 @@ describe HamlRender, "-07- Helpers:" do
   it "html_tabstring -- WSE proposed get/set function" do
     pending "WSE" do
       wspc = HamlRender.new
-      h_opts = { :escape_html => true, 
+      h_opts = { :escape_html => false,
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'strict' }

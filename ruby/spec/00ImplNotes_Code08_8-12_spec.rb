@@ -25,7 +25,7 @@ describe HamlRender, "ImplNotes Code 8.8-12 -- Normalizing:" do
                  :preserve => ['pre', 'textarea', 'code'],
                  :preformatted => ['ver'],
                  :oir => 'loose' }
-      wspc.render_haml( <<'HAML', h_opts, "   foo\n     bar  \n" )
+      wspc.render_haml( <<'HAML', h_opts, :strvar => "   foo\n     bar  \n" )
 .quux
   %code= strvar
   %cope= strvar

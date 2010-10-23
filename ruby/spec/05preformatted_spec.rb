@@ -26,10 +26,10 @@ require "./HamlRender"
 #04: atag,f:presrv :: different indentation but similar to 06,08
 #05: ptag,f:presrv :: unique
 #06: vtag,f:presrv :: same as 8:ptag,f:prefmt; close to 04
-#07: atag,f:prefmt :: same as 10:atag,Heredoc
+#07: atag,f:prefmt :: unique
 #08: ptag,f:prefmt :: same as 6:vtag,f:presrv; close to 04
 #09: vtag,f:prefmt :: unique
-#10: atag,Heredoc  :: same as 07:atag w/filter:preformatted
+#10: atag,Heredoc  :: unique
 #11: ptag,Heredoc  :: unique
 #12: vtag,Heredoc  :: unique .. verbatim contentblock
 
@@ -193,7 +193,7 @@ describe HamlRender, "-05- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -222,7 +222,7 @@ describe HamlRender, "-06- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -255,7 +255,7 @@ describe HamlRender, "-07- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -270,9 +270,9 @@ HAML
       wspc.html.should == <<HTML
 <div>
    <atag>
-       Nested lines
-         More Nested lines
-        Final line
+      Nested lines
+        More Nested lines
+       Final line
    </atag>
 </div>
 HTML
@@ -283,7 +283,9 @@ end
 #at column seven, just as the prior atag case: two OutputIndentSteps,
 #plus the one-space Leading Whitespace.
 #
-# Same result as case 10 "atag, HereDoc"
+#Unique result
+# :preformatted delivers a CB with protection of a 1-space leading whitespace
+# and 'atag' positions the CB at the OutputIndentStep from <atag>
 
 
 #================================================================
@@ -292,7 +294,7 @@ describe HamlRender, "-08- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -327,7 +329,7 @@ describe HamlRender, "-09- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -364,7 +366,7 @@ describe HamlRender, "-10- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -392,7 +394,7 @@ end
 # - atag shifts CB to align on OutputIndentStep
 # - CB has one column of Leading Whitespace
 #
-#Same rendering as case 07 "atag, preformatted"
+#Unique
 
 
 #================================================================
@@ -401,7 +403,7 @@ describe HamlRender, "-11- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -432,7 +434,7 @@ describe HamlRender, "-12- Preformatted:" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false,
-                 :preserve => ['textarea', 'code','ptag' ],
+                 :preserve => ['textarea', 'code', 'ptag' ],
                  :preformatted => ['ver', 'pre', 'code', 'vtag' ],
                  :oir => 'loose' }
       wspc.render_haml( <<'HAML', h_opts )
@@ -461,7 +463,7 @@ end
 
 #================================================================
 describe HamlRender, "-13- Preformatted:" do
-  it "%pre +observe BlockLeftMargin, with nested content" do
+  it "%pre +observe BlockOnsideDemarcation, with nested content" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -527,7 +529,7 @@ end
 
 #================================================================
 describe HamlRender, "-14- Preformatted:" do
-  it "%pre +NOTobserve BlockLeftMargin: requires HereDoc" do
+  it "%pre +NOTobserve BlockOnsideDemarcation: requires HereDoc" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -576,7 +578,7 @@ end
 
 #================================================================
 describe HamlRender, "-15- Preformatted:" do
-  it "%pre +NOTobserve BlockLeftMargin: requires HereDoc, using <<-" do
+  it "%pre +NOTobserve BlockOnsideDemarcation: requires HereDoc, using <<-" do
     pending "WSE" do
       wspc = HamlRender.new
       h_opts = { :escape_html => false, 
@@ -602,7 +604,6 @@ HAML
     Violets are blue;
   Rhymes can be typeset
     With boxes and glue.
-                  DEK
   </pre>
   <p>Donald E. Knuth, 1984, <em>The TEXbook</em></pm></p>.
 </tex>
